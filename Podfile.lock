@@ -1,0 +1,28 @@
+PODS:
+  - Cosmos (16.0.0)
+  - GRDB.swift (2.10.0)
+  - SwiftSoup (1.7.1)
+  - TinyConstraints (3.1.0)
+
+DEPENDENCIES:
+  - Cosmos
+  - GRDB.swift
+  - SwiftSoup
+  - TinyConstraints
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Cosmos
+    - GRDB.swift
+    - SwiftSoup
+    - TinyConstraints
+
+SPEC CHECKSUMS:
+  Cosmos: 7bcee0fa858a9355a214f2a181be5dffcee42c81
+  GRDB.swift: 9859cab1b990eac62ee550d3d2208ec1b44f76af
+  SwiftSoup: 277f7ef548826e0ca7603a06b30d4a5df3ee0587
+  TinyConstraints: 4721a4b303c799328867078ade6560e152df54d1
+
+PODFILE CHECKSUM: 07658a254e0381bd34aa71dab5b2f9cc80fd83d7
+
+COCOAPODS: 1.5.2

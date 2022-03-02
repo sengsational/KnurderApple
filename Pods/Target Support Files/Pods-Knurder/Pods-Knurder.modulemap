@@ -1,0 +1,6 @@
+framework module Pods_Knurder {
+  umbrella header "Pods-Knurder-umbrella.h"
+
+  export *
+  module * { export * }
+}
