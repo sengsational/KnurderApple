@@ -22,6 +22,31 @@ private let characterEntities : [ Substring : Character ] = [
   "&diams;"   : "?",
 ]
 
+public extension StringProtocol {
+  func index<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
+      range(of: string, options: options)?.lowerBound
+  }
+  func endIndex<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
+      range(of: string, options: options)?.upperBound
+  }
+  func indices<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> [Index] {
+      ranges(of: string, options: options).map(\.lowerBound)
+  }
+  func ranges<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> [Range<Index>] {
+      var result: [Range<Index>] = []
+      var startIndex = self.startIndex
+      while startIndex < endIndex,
+          let range = self[startIndex...]
+              .range(of: string, options: options) {
+              result.append(range)
+              startIndex = range.lowerBound < range.upperBound ? range.upperBound :
+                  index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+      }
+      return result
+  }
+}
+
+
 public extension String {
   func deletePrefix(_ prefix: String) -> String {
     guard self.hasPrefix(prefix) else {return self}
@@ -60,6 +85,7 @@ public extension String {
     }
     return resultString
   }
+  
   
   func removeFirstAndLast() -> String {
     let noFirstAndLastRange = self.index(after: self.startIndex)..<self.index(before: self.endIndex)
@@ -126,6 +152,87 @@ public extension String {
       }
     }
     return anAbvNumber
+  }
+
+  func indexOf(_ substring: String, _ offset: Int ) -> Int {
+        print("Extension.swift indexOf(substring, offset)")
+        if(offset > count) {return -1}
+
+        let maxIndex = self.count - substring.count
+        if(maxIndex >= 0) {
+            for index in offset...maxIndex {
+                let rangeSubstring = self.index(self.startIndex, offsetBy: index)..<self.index(self.startIndex, offsetBy: index + substring.count)
+                #if swift(>=4)
+                let selfSubstring = self[rangeSubstring]
+                #else
+                let selfSubstring = self.substring(with: rangeSubstring)
+                #endif
+                if selfSubstring == substring {
+                    print("Extension.swift indexOf(" + substring + "," + String(offset) + ") returning " + String(index))
+                    return index
+                }
+            }
+        }
+        print("Extension.swift indexOf(" + substring + "," + String(offset) + ") returning -1")
+        return -1
+    }
+
+  func indexOf(_ substring: String) -> Int {
+        return self.indexOf(substring, 0)
+    }
+
+  func replaceAll(of pattern: String, with replacement: String, options: NSRegularExpression.Options = []) -> String {
+      do {
+          let regex = try NSRegularExpression(pattern: pattern, options: [])
+          let range = NSRange(0..<self.utf16.count)
+          return regex.stringByReplacingMatches(in: self, options: [],
+                                                range: range, withTemplate: replacement)
+      } catch {
+          return self
+      }
+  }
+  
+  mutating func replaceAllAlt(_ originalString:String, with newString:String) {
+    self = self.replacingOccurrences(of: originalString, with: newString)
+  }
+  
+  func deAccent() -> String {
+    return self.folding(options: .diacriticInsensitive, locale: .current)
+  }
+
+  func levenshteinDistanceScore(to string: String, ignoreCase: Bool = true, trimWhiteSpacesAndNewLines: Bool = true) -> Float {
+
+      var firstString = self
+      var secondString = string
+
+      if ignoreCase {
+          firstString = firstString.lowercased()
+          secondString = secondString.lowercased()
+      }
+      if trimWhiteSpacesAndNewLines {
+          firstString = firstString.trimmingCharacters(in: .whitespacesAndNewlines)
+          secondString = secondString.trimmingCharacters(in: .whitespacesAndNewlines)
+      }
+
+      let empty = [Int](repeating:0, count: secondString.count)
+      var last = [Int](0...secondString.count)
+
+      for (i, tLett) in firstString.enumerated() {
+          var cur = [i + 1] + empty
+          for (j, sLett) in secondString.enumerated() {
+              cur[j + 1] = tLett == sLett ? last[j] : Swift.min(last[j], last[j + 1], cur[j])+1
+          }
+          last = cur
+      }
+
+      // maximum string length between the two
+      let lowestScore = max(firstString.count, secondString.count)
+
+      if let validDistance = last.last {
+          return  1 - (Float(validDistance) / Float(lowestScore))
+      }
+
+      return 0.0
   }
   
   /*************IMPORTED**************/

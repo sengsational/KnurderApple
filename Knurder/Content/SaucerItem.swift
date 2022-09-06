@@ -81,6 +81,8 @@ class SaucerItem: Record, CustomStringConvertible {
     review_id = row["review_id"]
     review_flag = row["review_flag"]
     timestamp = row["timestamp"]
+    untappd_beer = row["untappd_beer"]
+    untappd_brewery = row["untappd_brewery"]
     super.init(row: row)
   }
 
@@ -114,6 +116,8 @@ class SaucerItem: Record, CustomStringConvertible {
       container["review_id"] = review_id
       container["review_flag"] = review_flag
       container["timestamp"] = timestamp
+      container["untappd_beer"] = untappd_beer
+      container["untappd_brewery"] = untappd_brewery
   }
 
   override func didInsert(with rowID: Int64, for column: String?) {
@@ -361,12 +365,14 @@ class SaucerItem: Record, CustomStringConvertible {
   var glass_size: String?   //added by menu scan process
   var glass_price: String?  //added by menu scan process
   var review_flag: String? //added during database population
+  var untappd_beer: String?
+  var untappd_brewery: String?
   
   var brew_plate: String? //not in the database
   var user_plate: String? //not in the database
   
   public var description: String {
-    return "_id: \(id as Optional),name: \(name as Optional), store_id: \(store_id as Optional), brew_id: \(brew_id as Optional), brewer: \(brewer as Optional), city: \(city as Optional), isLocal: \(is_local as Optional), country: \(country as Optional), container: \(containerx as Optional), style: \(style as Optional), descript: \(descriptionx as Optional), abv: \(abv as Optional), stars: \(stars as Optional), reviews: \(reviews as Optional), created: \(created as Optional), createdDate: \(created_date as Optional), newArrival: \(new_arrival as Optional), isImport: \(is_import as Optional), active: \(active as Optional), tasted: \(tasted as Optional), store_name: \(store_name as Optional), override_tap: \(override_tap as Optional), override_flight: \(override_flight as Optional), overide_mix: \(override_mix as Optional), highlighted: \(highlighted as Optional), glassSize: \(glass_size as Optional), glassPrice: \(glass_price as Optional), userReview: \(user_review as Optional), userStars: \(user_stars as Optional), reviewId: \(review_id as Optional), reviewFlag: \(review_flag as Optional), timestamp: \(timestamp as Optional)"
+    return "_id: \(id as Optional),name: \(name as Optional), store_id: \(store_id as Optional), brew_id: \(brew_id as Optional), brewer: \(brewer as Optional), city: \(city as Optional), isLocal: \(is_local as Optional), country: \(country as Optional), container: \(containerx as Optional), style: \(style as Optional), descript: \(descriptionx as Optional), abv: \(abv as Optional), stars: \(stars as Optional), reviews: \(reviews as Optional), created: \(created as Optional), createdDate: \(created_date as Optional), newArrival: \(new_arrival as Optional), isImport: \(is_import as Optional), active: \(active as Optional), tasted: \(tasted as Optional), store_name: \(store_name as Optional), override_tap: \(override_tap as Optional), override_flight: \(override_flight as Optional), overide_mix: \(override_mix as Optional), highlighted: \(highlighted as Optional), glassSize: \(glass_size as Optional), glassPrice: \(glass_price as Optional), userReview: \(user_review as Optional), userStars: \(user_stars as Optional), reviewId: \(review_id as Optional), reviewFlag: \(review_flag as Optional), timestamp: \(timestamp as Optional), untappd_beer: \(untappd_beer as Optional), untappd_brewery: \(untappd_brewery as Optional)"
   }
   
   // MARK - Derived outputs
@@ -408,7 +414,23 @@ class SaucerItem: Record, CustomStringConvertible {
     
   }
   
-  let brewery_cleanup = ["Brewing Company","Artisanal Ales","Hard Cider Co.","& Co. Brewing","Craft Brewery","Beer Company","and Company","Brewing Co.","Brewing Co","& Son Co.","Brasserie","Brau-haus","Brouwerij","and Co.","Brewery","Brewing","Company","& Sohn","(Palm)","and Co","Cidery","Ales","Co.","Ltd"]
+  func getBeerName() -> String {
+    var saucerName = "(undefined)"
+    if let _saucerName = name {
+      saucerName = _saucerName
+    }
+    return saucerName
+  }
+  
+  func getBrewId() -> String {
+    var saucerId = "000"
+    if let _saucerId = brew_id {
+      saucerId = _saucerId
+    }
+    return saucerId
+  }
+  
+  let brewery_cleanup = ["Winery & Distillery","Beverage Associates","der Trappisten van","Brewing Company","Artisanal Ales","Hard Cider Co.","& Co. Brewing","Craft Brewery","Beer Company","Gosebrauerei","Brasserie d'","and Company","Cooperative","Brewing Co.","Brewing Co","& Son Co.","Brasserir","Brasserie","Brasseurs","Brau-haus","Brouwerji","Brauerei","BrewWorks","Breweries","Brouwerj","and Co.","Brewery","Brewing","Beer Co","Company","& Sohn","(Palm)","and Co","Cidery","& Sons","Beers","& Son","Ales","Brau","GmbH","Co.","Ltd","LTD","& co"]
 
   /*
   public func getRatingFormUrl() throws -> URL {

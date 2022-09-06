@@ -36,7 +36,14 @@
 		EBA5667420E4224B0077FEB3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA5666B20E4224B0077FEB3 /* Extensions.swift */; };
 		EBA5667620E44D230077FEB3 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBA5667520E44D230077FEB3 /* Toast.swift */; };
 		EBB1FF3B219BCC9800B7DF6E /* RateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB1FF3A219BCC9800B7DF6E /* RateViewController.swift */; };
+		EBC01A9428BFF49D001AA52C /* UntappdHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC01A9328BFF49D001AA52C /* UntappdHelper.swift */; };
+		EBC01A9728BFF89A001AA52C /* OcrScanHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC01A9628BFF89A001AA52C /* OcrScanHelper.swift */; };
+		EBC01A9A28BFFA49001AA52C /* MatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC01A9928BFFA49001AA52C /* MatchGroup.swift */; };
+		EBC01A9D28C00275001AA52C /* MatchItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC01A9C28C00275001AA52C /* MatchItem.swift */; };
+		EBC01AA028C036C6001AA52C /* MatchComparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC01A9F28C036C6001AA52C /* MatchComparer.swift */; };
+		EBC01AA328C276FF001AA52C /* MenuDbItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC01AA228C276FF001AA52C /* MenuDbItem.swift */; };
 		EBCF2D0527C994EC00AB8AF4 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = EBCF2D0427C994EC00AB8AF4 /* .gitignore */; };
+		EBE78F3D28B9100200A38089 /* UntappdItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE78F3C28B9100200A38089 /* UntappdItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,7 +80,14 @@
 		EBA5666B20E4224B0077FEB3 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		EBA5667520E44D230077FEB3 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		EBB1FF3A219BCC9800B7DF6E /* RateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateViewController.swift; sourceTree = "<group>"; };
+		EBC01A9328BFF49D001AA52C /* UntappdHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UntappdHelper.swift; sourceTree = "<group>"; };
+		EBC01A9628BFF89A001AA52C /* OcrScanHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcrScanHelper.swift; sourceTree = "<group>"; };
+		EBC01A9928BFFA49001AA52C /* MatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchGroup.swift; sourceTree = "<group>"; };
+		EBC01A9C28C00275001AA52C /* MatchItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchItem.swift; sourceTree = "<group>"; };
+		EBC01A9F28C036C6001AA52C /* MatchComparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchComparer.swift; sourceTree = "<group>"; };
+		EBC01AA228C276FF001AA52C /* MenuDbItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDbItem.swift; sourceTree = "<group>"; };
 		EBCF2D0427C994EC00AB8AF4 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		EBE78F3C28B9100200A38089 /* UntappdItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UntappdItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +127,13 @@
 				EB29759520EEC99100D0FFDE /* BeerTableViewCell.swift */,
 				EBA5666B20E4224B0077FEB3 /* Extensions.swift */,
 				EBA5666320E4224A0077FEB3 /* HtmlParsing.swift */,
+				EBE78F3C28B9100200A38089 /* UntappdItem.swift */,
+				EBC01A9328BFF49D001AA52C /* UntappdHelper.swift */,
+				EBC01A9628BFF89A001AA52C /* OcrScanHelper.swift */,
+				EBC01A9928BFFA49001AA52C /* MatchGroup.swift */,
+				EBC01A9C28C00275001AA52C /* MatchItem.swift */,
+				EBC01A9F28C036C6001AA52C /* MatchComparer.swift */,
+				EBC01AA228C276FF001AA52C /* MenuDbItem.swift */,
 			);
 			path = Content;
 			sourceTree = "<group>";
@@ -325,25 +346,32 @@
 				EBA5666F20E4224B0077FEB3 /* AppDatabase.swift in Sources */,
 				EB29759020E920CD00D0FFDE /* LogonViewController.swift in Sources */,
 				EBA5667120E4224B0077FEB3 /* AsyncOperation.swift in Sources */,
+				EBC01A9428BFF49D001AA52C /* UntappdHelper.swift in Sources */,
 				EB8C78D720B9EE2800BF28F8 /* ViewController.swift in Sources */,
 				EBA5667220E4224B0077FEB3 /* Operations.swift in Sources */,
 				EB2975A720F3BD8B00D0FFDE /* MasterViewController.swift in Sources */,
+				EBC01A9D28C00275001AA52C /* MatchItem.swift in Sources */,
 				EBA5666D20E4224B0077FEB3 /* StoreNameHelper.swift in Sources */,
+				EBC01A9728BFF89A001AA52C /* OcrScanHelper.swift in Sources */,
 				EB8C790A20BEF8FB00BF28F8 /* SharedPreferences.swift in Sources */,
 				EB29759420EEC85700D0FFDE /* KnurderViewController.swift in Sources */,
 				EBA5667620E44D230077FEB3 /* Toast.swift in Sources */,
 				EB29759620EEC99200D0FFDE /* BeerTableViewCell.swift in Sources */,
 				EB8418F420D1ADD2006B3C60 /* StoreListViewController.swift in Sources */,
+				EBC01A9A28BFFA49001AA52C /* MatchGroup.swift in Sources */,
 				EBA5666E20E4224B0077FEB3 /* TransactionDriver.swift in Sources */,
 				EBA5667020E4224B0077FEB3 /* LoaderController.swift in Sources */,
+				EBC01AA328C276FF001AA52C /* MenuDbItem.swift in Sources */,
 				EB29759D20EFDB9E00D0FFDE /* ManagePageViewController.swift in Sources */,
 				EBB1FF3B219BCC9800B7DF6E /* RateViewController.swift in Sources */,
 				EB2975A320EFF6C900D0FFDE /* DetailNavigationController.swift in Sources */,
 				EB29759220EA9AB900D0FFDE /* SettingsViewController.swift in Sources */,
 				EBA5666C20E4224B0077FEB3 /* HtmlParsing.swift in Sources */,
+				EBC01AA028C036C6001AA52C /* MatchComparer.swift in Sources */,
 				EB8C78D520B9EE2800BF28F8 /* AppDelegate.swift in Sources */,
 				EB8C790C20BEFCEE00BF28F8 /* Constants.swift in Sources */,
 				EBA5667420E4224B0077FEB3 /* Extensions.swift in Sources */,
+				EBE78F3D28B9100200A38089 /* UntappdItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +429,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Dale Seng (FXL33NUYST)";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = FXL33NUYST;
@@ -425,6 +454,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=*]" = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -463,7 +494,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Dale Seng (FXL33NUYST)";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = FXL33NUYST;
@@ -481,6 +513,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=*]" = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -493,9 +527,9 @@
 			baseConfigurationReference = C7F47BA1C82F405EDACF2C24 /* Pods-Knurder.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Dale Seng (FXL33NUYST)";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Dale Seng (FXL33NUYST)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.9.93;
+				CURRENT_PROJECT_VERSION = 1.9.94;
 				DEVELOPMENT_TEAM = FXL33NUYST;
 				INFOPLIST_FILE = Knurder/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
@@ -503,11 +537,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.93;
+				MARKETING_VERSION = 1.94;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sengsational.Knurder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "PP Knurder iOS App Store exp202208";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=*]" = "PP Knurder iOS App Store exp202208";
+				PROVISIONING_PROFILE_SPECIFIER = PP_Knurder_Distribution_App_Store_exp20230825;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=*]" = PP_Knurder_Distribution_App_Store_exp20230825;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -518,9 +552,9 @@
 			baseConfigurationReference = E664CCFB171579D7C2160997 /* Pods-Knurder.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Dale Seng (FXL33NUYST)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.9.93;
+				CURRENT_PROJECT_VERSION = 1.9.94;
 				DEVELOPMENT_TEAM = FXL33NUYST;
 				INFOPLIST_FILE = Knurder/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
@@ -528,10 +562,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.93;
+				MARKETING_VERSION = 1.94;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sengsational.Knurder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "PP Knurder iOS App Store exp202208";
+				PROVISIONING_PROFILE_SPECIFIER = PP_Knurder_Distribution_App_Store_exp20230825;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

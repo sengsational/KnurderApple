@@ -49,7 +49,24 @@ struct AppDatabase {
           try db.execute("ALTER TABLE ufo ADD COLUMN review_flag TEXT")
           try db.execute("ALTER TABLE ufo ADD COLUMN timestamp TEXT")
         }
-        
-        return migrator
+      
+      migrator.registerMigration("v3") { db in
+        try db.create(table: "ufolocal") { t in
+          t.column("name", .text).notNull()
+          t.column("store_id", .text).notNull()
+          t.column("brew_id", .text).notNull()
+          t.column("glass_size", .text)
+          t.column("glass_price", .text)
+          t.column("added_now_flag", .text)
+          t.column("last_updated_date", .text)
+          t.column("abv", .text)
+          t.column("untappd_beer", .text)
+          t.column("untappd_brewery", .text)
+        }
+        try db.execute("ALTER TABLE ufo ADD COLUMN untappd_beer TEXT")
+        try db.execute("ALTER TABLE ufo ADD COLUMN untappd_brewery TEXT")
+      }
+      
+      return migrator
     }
 }

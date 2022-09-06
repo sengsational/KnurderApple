@@ -92,16 +92,70 @@ class TransactionDriver {
     getStoreOp.name = "GetStoreOperation"
     
     getStoreOp.addDependency(refreshActiveInDatabaseOp)
+    refreshActiveInDatabaseOp.defineFollowOnOperation(getStoreOp)
+    
+
+    // MARK: **GET MENU PAGE**
+    //       *****************
+    var urlStringMenu = "" // variable will remain empty if store name has no untappd url
+    for item in Constants.untappdByStore {
+      if item.key == storeNumber {
+        if item.value.isEmpty {
+          break;
+        }
+        urlStringMenu = Constants.BaseUrl.untappd + item.value
+        break;
+      }
+    }
+    print("Calculated urlStringMenu [\(urlStringMenu)]")
+    
+    if urlStringMenu.isEmpty {
+      // MARK: **FINISH OPERATION**
+      let finishOp = FinishOperation(viewController: viewController, message: Constants.Messages.GOOD_BEER_LIST, uiParameters: [storeNumber, storeName], clearLoader: clearLoader)
+      finishOp.name = "FinishOperation"
+      
+      finishOp.addDependency(getStoreOp)
+      
+      // MARK: **********************ADD OPERATIONS************************************
+      OperationQueue().addOperations([getActiveOp, refreshActiveInDatabaseOp, getStoreOp, finishOp], waitUntilFinished: waitUntilFinished)
+      print("three operations added and running. Not running menu update due to not having a url.")
+      return
+    }
+    
+    let urlMenu = URL(string: urlStringMenu)
+    var getUrlRequestMenu = URLRequest(url: urlMenu!)
+    getUrlRequestMenu.httpMethod = "GET"
+    getUrlRequestMenu.timeoutInterval = 30
+    for item in Constants.Http.getHeaders {
+      if item.key == "Host" {
+        getUrlRequestMenu.addValue("business.untappd.com", forHTTPHeaderField: item.key)
+      } else {
+        getUrlRequestMenu.addValue(item.value, forHTTPHeaderField: item.key)
+      }
+    }
+    let defaultMenuSession = URLSession(configuration: config)
+    let getMenuOp = GetMenuOperation(getRequest: getUrlRequestMenu, defaultSession: defaultMenuSession)
+    getMenuOp.name = "GetMenuOperation"
+
+    getMenuOp.addDependency(getStoreOp)
+    getStoreOp.defineFollowOnOperation(getMenuOp)
+    
+    // MARK: **ENTER MENU INFO INTO THE DATABASE**
+    //       *************************************
+    let refreshMenuInDatabaseOp = RefreshMenuInDatabaseOperation(storeName: storeName, storeNumber: storeNumber, viewController: viewController)
+    refreshMenuInDatabaseOp.name = "RefreshMenuInDatabaseOperation"
+    
+    refreshMenuInDatabaseOp.addDependency(getMenuOp)
+    getMenuOp.defineFollowOnOperation(refreshMenuInDatabaseOp)
     
     // MARK: **FINISH OPERATION**
-    let finishOp = FinishOperation(viewController: viewController, message: Constants.Messages.GOOD_BEER_LIST, uiParameters: [storeNumber, storeName], clearLoader: clearLoader)
+    let finishOp = FinishOperation(viewController: viewController, message: Constants.Messages.GOOD_BEER_MENU_LIST, uiParameters: [storeNumber, storeName], clearLoader: clearLoader)
     finishOp.name = "FinishOperation"
-    
-    finishOp.addDependency(getStoreOp)
+    finishOp.addDependency(refreshMenuInDatabaseOp)
     
     // MARK: **********************ADD OPERATIONS************************************
-    OperationQueue().addOperations([getActiveOp, refreshActiveInDatabaseOp, getStoreOp, finishOp], waitUntilFinished: waitUntilFinished)
-    print("all operations added and running")
+    OperationQueue().addOperations([getActiveOp, refreshActiveInDatabaseOp, getStoreOp, getMenuOp, refreshMenuInDatabaseOp, finishOp], waitUntilFinished: waitUntilFinished)
+    print("all operations added and running " + OperationQueue().operations.debugDescription)
   }
   
   
@@ -126,7 +180,7 @@ class TransactionDriver {
     // MARK: **FORM SUBMIT OPERATION**
     var postUrlRequest = URLRequest(url: url!) //same url
     postUrlRequest.httpMethod = "PUT"
-    postUrlRequest.timeoutInterval = 30
+    postUrlRequest.timeoutInterval = 75
     for item in Constants.Http.postHeaders {
       postUrlRequest.addValue(item.value, forHTTPHeaderField: item.key)
     }
@@ -137,7 +191,7 @@ class TransactionDriver {
     let dataUrl = URL(string: Constants.BaseUrl.tasted)
     var dataUrlRequest = URLRequest(url: dataUrl!)
     dataUrlRequest.httpMethod = "GET"
-    dataUrlRequest.timeoutInterval = 40
+    dataUrlRequest.timeoutInterval = 75
     for item in Constants.Http.getHeaders {
       dataUrlRequest.addValue(item.value, forHTTPHeaderField: item.key)
     }

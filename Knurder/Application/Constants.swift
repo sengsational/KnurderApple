@@ -63,6 +63,22 @@ struct Constants {
     "RRB" : "Untasted Bottles",
     "RRL" : "Untasted Local Bottles",
     "RRR" : "Untasted Imported Bottles"]
+  
+  static let untappdByStore = [
+    "13888" : "/locations/35529/themes/137645/js", //https://saucerknurd.com/touchless-menu/?store=FSCHAR
+    //"13888" : "", //This is for testing the blank url failure, expected for some stores
+    "13883" : "/locations/35463/themes/137381/js", //https://saucerknurd.com/touchless-menu/?store=FSCOR
+    "18686214" : "",                               //https://saucerknurd.com/touchless-menu/?store=FSCYPRESS works, but has no untappd data
+    "18262641" : "",                               //https://saucerknurd.com/touchless-menu/?store=FSDFW works, but has no untappd data
+    "13891" : "/locations/35055/themes/135749/js", //https://saucerknurd.com/touchless-menu/?store=FSFW
+    "13880" : "/locations/34604/themes/133945/js", //https://saucerknurd.com/touchless-menu/?store=FSHOU
+    "13885" : "/locations/35530/themes/137649/js", //https://saucerknurd.com/touchless-menu/?store=FSLR
+    "13881" : "/locations/35533/themes/137661/js", //https://saucerknurd.com/touchless-menu/?store=FSMEM
+    "13877" : "/locations/35528/themes/137641/js", //https://saucerknurd.com/touchless-menu/?store=FSRAL
+    "13882" : "/locations/35531/themes/137653/js", //https://saucerknurd.com/touchless-menu/?store=FSSAN
+    "13879" : "",                                  //Have not found touchless page.  Tried SL,SUGAR,SLAND,SUGLAND,FSSL,FSSUGAR,FSSLAND,FSSUGLAND,SUGARFS,SLANDFS,SUGLANDFS,SUGARLANDFS
+    "13884" : "",                                  //Have not found touchless page.  Tried LAKE,THELAKE,TL,TLAKE,FSLAKE,FSTHELAKE,FSTL,FSTLAKE,LAKEFS,THELAKEFS,TLFS,TLAKEFS
+  ]
 
   struct CredentialsKey {
     static let emailOrUsername = "emailOrUsername"
@@ -89,10 +105,12 @@ struct Constants {
     static let logout = "https://www.beerknurd.com/user/logout"
     static let quizPage = "https://www.saucerknurd.com/glassnite/quiz/"
     static let quizUserLandingPage = "http://www.saucerknurd.com/glassnite/beerknurd-glassnite.php?"
+    static let untappd = "https://business.untappd.com"
   }
   
   struct Messages {
     static let GOOD_BEER_LIST = "You've got the current beer list!"
+    static let GOOD_BEER_MENU_LIST = "You've got the current beer list plus details!"
     static let GOOD_TASTED_LIST = "You've got your tasted list!"
   }
   

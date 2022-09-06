@@ -396,7 +396,7 @@ class GetStoreOperation: AsyncOperation {
   var defaultSession: URLSession
   
   // MARK: Variables for successive operation
-  var followupOp: FinishOperation? = nil
+  var followupOp: GetMenuOperation? = nil
   var returnData: String?
   
   init(getRequest: URLRequest, defaultSession: URLSession) {
@@ -405,7 +405,8 @@ class GetStoreOperation: AsyncOperation {
   }
   
   override func main() {
-
+    print("--------------------------1-GET STORE PAGE NOT STARTED!!! commented out------------------------")
+    /*
     defaultSession.dataTask(with: getRequest) {data, response, error in
       guard let data = data, let response = response as? HTTPURLResponse,
         response.statusCode == 200 else {
@@ -426,10 +427,12 @@ class GetStoreOperation: AsyncOperation {
       print("--------------------------1-GET STORE PAGE IS DONE-------------------------")
       self.state = .finished
       }.resume()
+    */
+    self.state = .finished
   }
   
 
-  public func defineFollowOnOperation(_ followupOp: FinishOperation) {
+  public func defineFollowOnOperation(_ followupOp: GetMenuOperation) {
     self.followupOp = followupOp
   }
 }
@@ -713,6 +716,115 @@ class FinishOperation: AsyncOperation {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class GetMenuOperation: AsyncOperation {
+  // MARK: Variables defined during init
+  var getRequest: URLRequest
+  var defaultSession: URLSession
+  
+  // MARK: Variables for successive operation
+  var followupOp: RefreshMenuInDatabaseOperation? = nil
+  var returnData: String?
+  
+  init(getRequest: URLRequest, defaultSession: URLSession) {
+    self.getRequest = getRequest
+    self.defaultSession = defaultSession
+  }
+
+  override func main() {
+    print("--------------------------1-GET MENU PAGE IS STARTING------------------------------")
+    
+    defaultSession.dataTask(with: getRequest) {data, response, error in
+      guard let data = data, let responseCheck = response as? HTTPURLResponse, responseCheck.statusCode == 200 else {
+        let resp = response as? HTTPURLResponse
+        if let respGood = resp {
+          print("No data or statusCode not OK (" + String(respGood.statusCode) + ")")
+        }
+        print("--------------------------1-GET MENU PAGE FAILED WITH BAD STATUS------------------------")
+        self.state = .finished
+        self.cancelOperations()
+        return
+      }
+      if let returnData = String(data: data, encoding: .utf8) {
+        self.followupOp?.setWebPageString(returnData)
+      } else {
+        self.cancelOperations()
+        print("No data returned from the page<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+      }
+      print("--------------------------1-GET MENU PAGE IS DONE-------------------------")
+      self.state = .finished
+      }.resume()
+  }
+  
+
+  public func defineFollowOnOperation(_ followupOp: RefreshMenuInDatabaseOperation) {
+    self.followupOp = followupOp
+  }
+}
+
+class RefreshMenuInDatabaseOperation: AsyncOperation {
+  var webPage: String?
+  var storeName: String
+  var storeNumber: String
+  var viewController: ViewController
+  
+  // MARK: Variables for successive operation
+  var followupOp: FinishOperation? = nil
+  var returnData: String?
+
+  
+  init(storeName: String, storeNumber: String, viewController: ViewController) {
+    self.storeName = storeName
+    self.storeNumber = storeNumber
+    self.viewController = viewController
+  }
+
+  override func main() {
+    if let webPage = webPage {
+      print("----------------Untappd web page access Start with \(webPage.count) characters.------------")
+      if webPage.indexOf("container.innerHTML") < 0 {
+        cancelOperations()
+        print("--------web page missing key------")
+        self.state = .finished
+        return
+      }
+      let result = UntappdHelper.refreshMenuList(rawItems: webPage, storeNumber: storeNumber, storeName: storeName)
+      if result.hasPrefix("ERROR") {
+        cancelOperations()
+        print("----------------Untappd web page access FAILED - CancelledAllOperations------------ \(result)")
+        self.state = .finished
+        return
+      }
+      // get list of UntappdItem objects from helper object
+      let untappdItemList = UntappdHelper.getUntappdItemList()
+      if (untappdItemList.isEmpty) {
+        cancelOperations()
+        print("----------------Untappd web page had zero entries - CancelledAllOperations------------ \(result)")
+        self.state = .finished
+        return
+      }
+      
+      let resultValues = OcrScanHelper.matchUntappdItems(untappdItemArray: untappdItemList, storeNumber: storeNumber)
+      print("result values " + resultValues.description)
+      
+      print("----------------Database Menu Load Complete------------ \(result)")
+    } else {
+      cancelOperations()
+    }
+    self.state = .finished
+    return
+  }
+  
+  func setWebPageString(_ webPage: String) {
+    self.webPage = webPage
+  }
+
+  public func defineFollowOnOperation(_ followupOp: FinishOperation) {
+    self.followupOp = followupOp
+  }
+
+}
 
 
 extension URLRequest {
