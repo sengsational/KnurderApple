@@ -25,7 +25,7 @@ class StoreListViewController: UIViewController, UITableViewDelegate, UITableVie
     let firstRun = SharedPreferences.getString(PreferenceKeys.firstRunTutorialPref, "")
     if firstRun.count == 0 {
       SharedPreferences.putString(PreferenceKeys.firstRunTutorialPref, "F")
-      let alertViewController = UIAlertController(title: "Welcome", message: "Welcome to Knurder!\nThis application connects to the Flying Saucer web site, and that's it.  I'm not trying to make money from this app, it's just for fun.  I hope you get some mileage out of it.  Pick your saucer and you're good to go.  Cheers!\n\nPS: Search for Knurder on Facebook if you want to connect.", preferredStyle: .alert)
+      let alertViewController = UIAlertController(title: "Welcome", message: "Welcome to Knurder!\nThis application connects to the Flying Saucer web site, and that's it.  I'm not trying to make money from this app, it's just for fun.  I hope you get some mileage out of it.  Pick your saucer and you're good to go.  Cheers!\n\nPS: Search for Knurder on Facebook if you want to connect.  It would be nice to have a beta tester :)", preferredStyle: .alert)
       let okAction = UIAlertAction.init(title: "OK", style: .default) { (action) -> Void in
         SharedPreferences.putString(PreferenceKeys.applicationAlertPref, "NEW USER")
       }

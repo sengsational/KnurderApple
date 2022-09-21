@@ -80,30 +80,36 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     let applicationAlert = SharedPreferences.getString(PreferenceKeys.applicationAlertPref, "")
     let alertNeverPresented = applicationAlert == ""
 
-    let cardNumberPref = SharedPreferences.getString(PreferenceKeys.cardNumberPref, "1")
-    let isBrandNewUserOrNeverLoggedIn = cardNumberPref == "1"
+    let authenticationNamePref = SharedPreferences.getString(PreferenceKeys.authenticationNamePref, "1")
+    let isBrandNewUserOrNeverLoggedIn = authenticationNamePref == "1"
     
+    var listUpdateAsked = false
+
     if alertNeverPresented && !isBrandNewUserOrNeverLoggedIn {
       SharedPreferences.putString(PreferenceKeys.applicationAlertPref, "DONE")
       let alertViewController = UIAlertController(title: "IMPORTANT LOGON INFORMATION", message: "If you haven't done so, please update your login to use your email address or usename.\n\nCard number is no longer going to work.\n\nClick settings > Log Out, then log on with your email or username.", preferredStyle: .alert)
       let okAction = UIAlertAction.init(title: "OK", style: .default) { (action) -> Void in
         
-        if (CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: cardNumberPref))) {
-          SharedPreferences.putString(PreferenceKeys.cardNumberPref, "")
+        if (CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: authenticationNamePref))) {
+          SharedPreferences.putString(PreferenceKeys.authenticationNamePref, "")
         }
       }
       alertViewController.addAction(okAction)
       present(alertViewController, animated: true, completion: nil)
-    } else if AppDelegate.oldListCheck {
-      runOldListCheck()
+    } else if AppDelegate.oldListCheck { // always true on app startup
+      listUpdateAsked = runOldListCheck()
       AppDelegate.oldListCheck = false
-    } else if  timesUsed == 5 || timesUsed == 25 || timesUsed == 100 {
+    }
+    if !listUpdateAsked && (timesUsed == 5 || timesUsed == 25 || timesUsed == 62 || timesUsed == 100) {
       AppDelegate.incrementUsageCounter(force: true)
       var title = "Tell Your Friends"
       var message = "Did you know that Knurder is availble on iPhone and Android?  Since it's unofficial, the only way people know is if YOU tell them! Tweet #knurder"
       if timesUsed == 25 {
         title = "Spread the Word"
         message = "You seem to be getting some mileage out the Knurder app, and I'm glad to see it.  Don't forget to spread the word...it's the only way your fellow beerknurds can find out about it."
+      } else if timesUsed == 62 {
+        title = "Knurder Wizard!"
+        message = "Your a phD level Knurder user.  It's amazing how little feedback I get.  Please touch base on the Facebook \"ufoknurder\" page.  And don't forget to tell others about the app."
       } else if timesUsed == 100 {
         title = "You Are a Master!"
         message = "You probably know more about using Knurder than anybody!  It's amazing how little feedback I get.  Have you considered searching \"ufoknurder\" to find the Facebook page, then telling me what the next feature should be, or what you find annoying?"
@@ -127,7 +133,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
       return
     }
     
-    // TODO: REMOVE THIS AFTER I GET DONE TESTING
+    // TOXO: REMOVE THIS AFTER I GET DONE TESTING
     //return
     
     // Only check the quiz once per day maximum
@@ -140,7 +146,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     }
   }
   
-  func runOldListCheck() {
+  func runOldListCheck() -> Bool {
+    var alertPresented = false;
     let debugTestingTwoDays = 0 // Constants.ONE_DAY_IN_SECONDS * 2
     let presentationMode = SharedPreferences.getString(PreferenceKeys.presentationModePref, "")
 
@@ -157,7 +164,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     if (needsStoreListDialog && needsTastedDialog) {
       let lastPresentationMode = SharedPreferences.getString(PreferenceKeys.presentationModePref, "")
       print("1lastPresentationMode \(lastPresentationMode)")
+      alertPresented = true
       askAboutUpdatingBoth(daysSinceRefreshedList, daysSinceRefreshedTasted)
+      
     } else if needsStoreListDialog {
       let lastPresentationMode = SharedPreferences.getString(PreferenceKeys.presentationModePref, "")
       print("2lastPresentationMode \(lastPresentationMode)")
@@ -165,11 +174,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
         setToStorePresentation()
         perform(#selector(presentStoresOverlay), with: nil, afterDelay: 0)
       } else {
+        alertPresented = true
         askAboutUpdatingOneList("storeList", daysSinceRefreshedList)
       }
     } else if needsTastedDialog {
+      alertPresented = true
       askAboutUpdatingOneList("tastedList", daysSinceRefreshedTasted)
     }
+    return alertPresented
   }
 
   func askAboutUpdatingBoth(_ daysSinceList: Int, _ daysSinceTasted: Int) {
@@ -286,7 +298,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
   func runUpdates(_ store: Bool,_ tasted: Bool) {
     print("completion with \(store) \(tasted)")
     if store || tasted {
-      LoaderController.sharedInstance.showLoader(viewController: self, title: "Please Wait", message: "Getting your information from the UFO site")
+      LoaderController.sharedInstance.showLoader(viewController: self, title: "Please Wait", message: "Getting your information from the UFO site.  This has been taking a long time lately.")
     }
     let clearLoader = !(store && tasted) // don't clear the loader if tasted process will be following
     
@@ -312,6 +324,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     logonViewController.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
     (logonViewController as! LogonViewController).myMethod(self)
     self.present(logonViewController, animated: false)
+  }
+  
+  @objc func loadExternalWebPage() {
+    let loadedUser = SharedPreferences.getString(PreferenceKeys.loadedUserPref, "")
+    if let url = URL(string: Constants.BaseUrl.analytics + loadedUser) {
+      UIApplication.shared.open(url)
+    }
   }
   
   override func didReceiveMemoryWarning() {
@@ -416,6 +435,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
       print("change location action")
       self.perform(#selector(self.presentStoresOverlay), with: nil, afterDelay: 0)
     })
+    
+    let showAnalyticsOnWeb = UIAlertAction(title: "Tasted Analytics", style: .default, handler: { (alert: UIAlertAction!) -> Void in
+      print("show analytics action")
+      self.perform(#selector(self.loadExternalWebPage), with: nil, afterDelay: 0)
+    })
     //let rateApp = UIAlertAction(title: "Rate this app", style: .default, handler: { (alert: UIAlertAction!) -> Void in
     //  print("rate app action")
     //
@@ -436,6 +460,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     })
 
     let currentPresentationMode = SharedPreferences.getString(PreferenceKeys.presentationModePref, "")
+    let loadedUserPref = SharedPreferences.getString(PreferenceKeys.loadedUserPref, "")
+    
     
     if currentPresentationMode == PreferenceValues.storePresentation {
       alertController.addAction(refreshActive)
@@ -453,6 +479,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
       alertController.addAction(logOn); logOn.isEnabled = false
       alertController.addAction(logOut)
       alertController.addAction(changeLocation)
+      if (loadedUserPref != "") {
+        alertController.addAction(showAnalyticsOnWeb)
+      }
       // alertController.addAction(rateApp)
       alertController.addAction(showSettings)
       // alertController.addAction(showAbout)

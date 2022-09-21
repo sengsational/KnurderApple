@@ -257,4 +257,99 @@ class HtmlParsing {
     return returnNames
   }
 
+  static func getParamListFromVisitorHtml(_ html: String, _ credentials: [String: String]) -> [String: String] {
+    var paramList = [String: String]()
+    let storeNumber = credentials["storeNumberCardauth"] ?? "13888"
+    let storeTwoChar = StoreNameHelper.lookupStoreTwochar(forNumber: storeNumber)
+    let cardNumber = credentials["cardNumber"] ?? "000000"
+    paramList["homestore"] = "%" + storeTwoChar
+    paramList["cardNumber"] = cardNumber
+    paramList["mouOpt"] = "no"
+    paramList["submit"] = "Beam+Me+Up!"
+    paramList["cardNum"] = "%" + storeTwoChar + cardNumber + "=?"
+    return paramList
+  }
+  static func getParamListFromKioskHtml(_ html: String, _ credentials: [String: String]) -> [String: String] {
+    var paramList = [String: String]()
+    let storeNumber = credentials["storeNumberCardauth"] ?? "13888"
+    let storeTwoChar = StoreNameHelper.lookupStoreTwochar(forNumber: storeNumber)
+    let cardNumber = credentials["cardNumber"] ?? "000000"
+    let cardPin = credentials["pin"] ?? "0000"
+    paramList["cardData"] = "%" + storeTwoChar + cardNumber + "=?"
+    paramList["signinPinNumber"] = cardPin
+    paramList["submitPin"] = "Beam+Me+Up!"
+    return paramList
+  }
+  
+  static func getCurrentQueuedBeerNamesFromHtml(_ html: String, _ credentials: [String: String]) -> String {
+    var message = "Success"
+    var foundBeerIds = ""
+    do {
+      let doc: Document = try SwiftSoup.parse(html)
+      let accordionDiv = try doc.getElementById("accordion")
+      let cardList = try accordionDiv?.getElementsByClass("card")
+      if (cardList != nil) {
+        for card in cardList! {
+          do {
+            let collapseList = try card.getElementsByClass("collapse")
+            let removeQueueList = try collapseList.get(0).getElementsByClass("removeQueuedBrewIcon")
+            let brewId = try removeQueueList.get(0).attr("brewid")
+            print("found queued beer: " + brewId);
+            foundBeerIds += brewId + ", "
+          } catch {
+            print("failed for \(card.debugDescription)")
+          }
+        }
+      }
+    } catch Exception.Error(let type, let msg) {
+      print("error in the queued beer page \(msg) type: \(type)")
+      message = "error in the queued beer: \(msg)"
+    } catch {
+      print("error in the queued beer.")
+      message = "error in the queued beer."
+    }
+    print("queued beer message: \(message)")
+    return foundBeerIds
+  }
+
+  static func manageHeaderFieldCookies(fields: [String: String], url: URL, outputPrint: Bool) {
+    let cookies = HTTPCookie.cookies(withResponseHeaderFields: fields, for: url)
+    if (outputPrint) {
+      print("There were \(String(cookies.count)) cookies in the header fields.")
+    }
+    HTTPCookieStorage.shared.setCookies(cookies, for: url, mainDocumentURL: nil)
+    for cookie in cookies {
+      var cookieProperties = [HTTPCookiePropertyKey: Any]()
+      cookieProperties[.name] = cookie.name
+      cookieProperties[.value] = cookie.value
+      cookieProperties[.domain] = cookie.domain
+      cookieProperties[.path] = cookie.path
+      cookieProperties[.version] = cookie.version
+      cookieProperties[.expires] = Date().addingTimeInterval(31536000)
+
+      let newCookie = HTTPCookie(properties: cookieProperties)
+      HTTPCookieStorage.shared.setCookie(newCookie!)
+      
+      if outputPrint {
+        print("cookie name: \(cookie.name) value: \(cookie.value)")
+      }
+    }
+  }
+  
+  static func printSharedStorageCookies() -> Void {
+    if let cookies = URLSession.shared.configuration.httpCookieStorage?.cookies {
+      for cookie in cookies {
+        print("name: \(cookie.name) value: \(cookie.value)")
+      }
+    } else {
+      print("no shared configuration cookies available.")
+    }
+  }
+}
+
+class DelegateForRedirects: NSObject, URLSessionTaskDelegate {
+  func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+    print("delegate activated")
+    urlSession(session, task: task, willPerformHTTPRedirection: response, newRequest: request, completionHandler: completionHandler)
+  }
 }

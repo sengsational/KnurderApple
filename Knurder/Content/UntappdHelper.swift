@@ -30,13 +30,13 @@ class UntappdHelper {
     }
     guard let firstHtmlLocIndex = untappdData.index(of: "<") else { return "ERROR: No html found"}
 
-    // **** TODO: REMOVE SHORTENED AMOUNT OF DATA
-    guard let lastThingLocIndex = untappdData.index(of: "Exotic jewel") else { return "ERROR: No ending key found"}
-    untappdData = "<html><body>" + String(untappdData[firstHtmlLocIndex ... lastThingLocIndex]) + "</p></div></div></div></div></div></body></html>"
+    // **** TOXO: REMOVE SHORTENED AMOUNT OF DATA
+    //guard let lastThingLocIndex = untappdData.index(of: "Exotic jewel") else { return "ERROR: No ending key found"}
+    //untappdData = "<html><body>" + String(untappdData[firstHtmlLocIndex ... lastThingLocIndex]) + "</p></div></div></div></div></div></body></html>"
 
-    // FULL DATA TODO: UNCOMMENT THE NEXT TWO LINES
-    //guard let lastThingLocIndex = untappdData.index(of: "menu-title\">Bottles") else { return "ERROR: No ending key found"}
-    //untappdData = "<html><body>" + String(untappdData[firstHtmlLocIndex ... lastThingLocIndex]) + "</body></html>"
+    // FULL DATA TOXO: UNCOMMENT THE NEXT TWO LINES
+    guard let lastThingLocIndex = untappdData.index(of: "menu-title\">Bottles") else { return "ERROR: No ending key found"}
+    untappdData = "<html><body>" + String(untappdData[firstHtmlLocIndex ... lastThingLocIndex]) + "</body></html>"
 
     //print("firstHtmlLoc " + String(firstHtmlLocIndex.encodedOffset) + " lastThingLoc " + String(lastThingLocIndex.encodedOffset))
     //print("unappdData length [" + String(untappdData.count) + "]")

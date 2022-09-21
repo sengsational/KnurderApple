@@ -53,7 +53,12 @@ extension AsyncOperation {
       state = .finished
       return
     }
-    
+    //print("operation queue: " + OperationQueue.current.debugDescription + " " + OperationQueue().debugDescription)
+    if let queue = OperationQueue.current {
+      print(getRemainingOperations(queue: queue))
+    } else {
+      print("unable to get list of operations")
+    }
     main()
     state = .executing
   }
@@ -62,9 +67,35 @@ extension AsyncOperation {
     super.cancel()
     state = .finished
   }
+
+  func getRemainingOperations(queue: OperationQueue) -> String {
+    var resultList = ""
+    for op in queue.operations {
+        resultList += (op.name ?? "(name not found)") + ", "
+    }
+    return resultList
+  }
   
-  func cancelOperations() {
-    if let operations: [Operation] = (OperationQueue.current?.operations) {
+  func cancelOperations(queue: OperationQueue) {
+    print("cancelOperations(OperationQueue) Cancelling " + String(queue.operations.count) + " operations.")
+    
+    for operation in queue.operations.reversed() {
+      print("handling " + (operation.name ?? "(unknown)"))
+      if operation.name != "FinishOperation" {
+        print("cancelling \(operation.name ?? "(no name)")")
+        operation.cancel()
+      } else {
+        let finishOp = operation as! FinishOperation
+        finishOp.message = "The update failed."
+        finishOp.uiParameters = [String]()
+      }
+    }
+  }
+  
+  func xcancelOperations() {
+    print("cancelOperations() <<<<<<<<<<<<<<<<<<<<<<<<<<<< NO LONGER WORKS")
+
+    if let operations: [Operation] = OperationQueue.current?.operations {
       for operation in operations.reversed() {
         if operation.name != "FinishOperation" {
           print("cancelling \(operation.name ?? "(no name)")")
@@ -76,7 +107,8 @@ extension AsyncOperation {
         }
       }
     } else {
-        print("there were no operations")
+        print("there was no current operation queue")
     }
+    
   }
 }

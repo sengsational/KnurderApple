@@ -15,7 +15,8 @@ var dbQueue: DatabaseQueue!
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var window: UIWindow?
-  static var oldListCheck = true // ONLY FALSE FOR QUICKER TESTING TODO: RE ENABLE
+  static var oldListCheck = true // ONLY FALSE FOR QUICKER TESTING TOXO: RE ENABLE
+  
   static var quizCheck = true
   
   //static var queryCaller: String!
@@ -47,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   static func incrementUsageCounter(force: Bool) {
     let timesRun = SharedPreferences.getInt(PreferenceKeys.timesRunCounter, 0)
     print("timesRun \(timesRun)")
-    if (timesRun == 5 || timesRun == 25 || timesRun == 100) && !force { return } // The counter "sticks" at 5 and 25 and only is forced past those when an alert message is presented
+    if (timesRun == 5 || timesRun == 25 || timesRun == 62 || timesRun == 100) && !force { return } // The counter "sticks" at 5 and 25 and only is forced past those when an alert message is presented
     SharedPreferences.putInt(PreferenceKeys.timesRunCounter, timesRun + 1)
   }
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8D6A8351B33C700BA88EF24C /* Pods_Knurder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 095D56ED9CEA36717CD85729 /* Pods_Knurder.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		EB1E336728CF9C3200217794 /* CardauthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1E336628CF9C3200217794 /* CardauthViewController.swift */; };
 		EB29759020E920CD00D0FFDE /* LogonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB29758F20E920CD00D0FFDE /* LogonViewController.swift */; };
 		EB29759220EA9AB900D0FFDE /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB29759120EA9AB900D0FFDE /* SettingsViewController.swift */; };
 		EB29759420EEC85700D0FFDE /* KnurderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB29759320EEC85700D0FFDE /* KnurderViewController.swift */; };
@@ -50,6 +51,7 @@
 		095D56ED9CEA36717CD85729 /* Pods_Knurder.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Knurder.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7F47BA1C82F405EDACF2C24 /* Pods-Knurder.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Knurder.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Knurder/Pods-Knurder.debug.xcconfig"; sourceTree = "<group>"; };
 		E664CCFB171579D7C2160997 /* Pods-Knurder.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Knurder.release.xcconfig"; path = "Pods/Target Support Files/Pods-Knurder/Pods-Knurder.release.xcconfig"; sourceTree = "<group>"; };
+		EB1E336628CF9C3200217794 /* CardauthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardauthViewController.swift; sourceTree = "<group>"; };
 		EB29758F20E920CD00D0FFDE /* LogonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogonViewController.swift; sourceTree = "<group>"; };
 		EB29759120EA9AB900D0FFDE /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		EB29759320EEC85700D0FFDE /* KnurderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KnurderViewController.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				EB29759120EA9AB900D0FFDE /* SettingsViewController.swift */,
 				EB2975A220EFF6C900D0FFDE /* DetailNavigationController.swift */,
 				EBB1FF3A219BCC9800B7DF6E /* RateViewController.swift */,
+				EB1E336628CF9C3200217794 /* CardauthViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				EB8C78D520B9EE2800BF28F8 /* AppDelegate.swift in Sources */,
 				EB8C790C20BEFCEE00BF28F8 /* Constants.swift in Sources */,
 				EBA5667420E4224B0077FEB3 /* Extensions.swift in Sources */,
+				EB1E336728CF9C3200217794 /* CardauthViewController.swift in Sources */,
 				EBE78F3D28B9100200A38089 /* UntappdItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -309,6 +309,12 @@ class SaucerItem: Record, CustomStringConvertible {
         self.abv = aValue
         return
       }
+      if (_desc.starts(with: "untappd")) {
+        self.abv = _desc.getNumberStringFromString()
+        //print("untappd found")
+        return
+        //print("abv [" + self.abv + "]")
+      }
       self.abv = "0"
       let abvMatchArea = _desc.getMatchArea(match: "ABV", leftOffset: 16, rightOffset: 0)
       if !abvMatchArea.isEmpty {
@@ -331,6 +337,7 @@ class SaucerItem: Record, CustomStringConvertible {
         let lastWord = String(split.suffix(1).joined(separator: " "))
         self.abv = lastWord.getNumberStringFromString()
       }
+      //print("var abv ran " + self.getBeerName())
     }
   }
   var stars: String?       //from web
@@ -428,6 +435,34 @@ class SaucerItem: Record, CustomStringConvertible {
       saucerId = _saucerId
     }
     return saucerId
+  }
+  
+  func setAbvNumber(abvNumber: String) {
+    self.abv = abvNumber
+  }
+  
+  func getGlassName() -> String {
+    var glassName = ""
+    if let ounces = self.glass_size {
+      switch ounces {
+      case "16":
+        glassName = "pint"
+      case "13":
+        fallthrough
+      case "11.5":
+        glassName = "snifter"
+      case "10":
+        fallthrough
+      case "9":
+        glassName = "wine"
+      case "1":
+        glassName = "stein"
+      default:
+        print("the beer " + self.getBeerName() + " had " + ounces + " unexpectedly")
+          glassName = ""
+      }
+    }
+    return glassName
   }
   
   let brewery_cleanup = ["Winery & Distillery","Beverage Associates","der Trappisten van","Brewing Company","Artisanal Ales","Hard Cider Co.","& Co. Brewing","Craft Brewery","Beer Company","Gosebrauerei","Brasserie d'","and Company","Cooperative","Brewing Co.","Brewing Co","& Son Co.","Brasserir","Brasserie","Brasseurs","Brau-haus","Brouwerji","Brauerei","BrewWorks","Breweries","Brouwerj","and Co.","Brewery","Brewing","Beer Co","Company","& Sohn","(Palm)","and Co","Cidery","& Sons","Beers","& Son","Ales","Brau","GmbH","Co.","Ltd","LTD","& co"]
@@ -793,6 +828,15 @@ class SaucerItem: Record, CustomStringConvertible {
       }
     }
     return beerAbvText
+  }
+  static func getPriceText(_ price: String?) -> String {
+    var beerPriceText = ""
+    if let stringPrice = price, let floatPrice = Float(stringPrice) {
+      if floatPrice > 0 && floatPrice < 50 {
+        beerPriceText = String(format: "$%.02f", floatPrice)
+      }
+    }
+    return beerPriceText
   }
   
   static func getTastedText(_ created_date: String? ) -> String {

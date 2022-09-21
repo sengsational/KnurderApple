@@ -12,10 +12,18 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
   var theSearchText: String = ""
   var theQueryText: String = ""
   
+  var hideButton: Bool = true
+
+
   let tastedDateDbFormatter = DateFormatter()
   let tastedDateOutputFormatter = DateFormatter()
+  var originalBarButtons: [UIBarButtonItem]?
+  
 
   // MARK: - View Setup
+  
+  
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     fetchRecords()
@@ -40,6 +48,15 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
     
     tastedDateDbFormatter.dateFormat = "yyyy MM dd"
     tastedDateOutputFormatter.dateFormat = "MMM dd, yyyy"
+
+    // DOES NOT HAVE EFFECT
+    //print("setting navigationBar color")
+    //navigationController?.navigationBar.isTranslucent = false
+    //navigationController?.navigationBar.barTintColor = .blue
+    //navigationController?.navigationBar.tintColor = .brown
+    
+    
+    
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -58,6 +75,7 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
 
       // Change the state of the icon in the table view cell
       cell.beerFlag.isHidden = !dbIsHighlighted
+      
 
       
     }
@@ -68,7 +86,6 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
         SharedPreferences.putString(PreferenceKeys.shakerTutorialPref, "F")
         let alertViewController = UIAlertController(title: "Shake It!", message: "Here's the list you requested.  If you can't decide which beer to drink, just shake you phone and it will pick a random one for you!", preferredStyle: .alert)
         let okAction = UIAlertAction.init(title: "OK", style: .default) { (action) -> Void in
-          //self.alertControllerActionString = "OK Welcome"
         }
         alertViewController.addAction(okAction)
         present(alertViewController, animated: true, completion: nil)
@@ -76,7 +93,20 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     self.becomeFirstResponder() // For shake gesture
-    
+
+    if AppDelegate.currentQueryIsTasted() {
+      let analyticsTutorial = SharedPreferences.getString(PreferenceKeys.analyticsTutorialPref, "")
+      if let rowCount = visibleRows?.count {
+        if analyticsTutorial.count == 0 && rowCount > 0 {
+          SharedPreferences.putString(PreferenceKeys.analyticsTutorialPref, "F")
+          let alertViewController = UIAlertController(title: "Analytics Link", message: "Here's your tasted list.  Did you know that by clicking the the gear icon, you can open up a web page to show analytics of your tasted beers?  You can geek out, thanks to Eric Rechlin.", preferredStyle: .alert)
+          let okAction = UIAlertAction.init(title: "OK", style: .default) { (action) -> Void in
+          }
+          alertViewController.addAction(okAction)
+          present(alertViewController, animated: true, completion: nil)
+        }
+      }
+    }
   }
   
   override var canBecomeFirstResponder: Bool { // For shake gesture
@@ -116,6 +146,21 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
     brewController = try! FetchedRecordsController(dbQueue, request: queryInterfaceRequest)
     try! brewController.setRequest(sql: sqlString, arguments: StatementArguments(arguments), adapter: nil)
     try! brewController.performFetch()
+    
+    // This query is "flagged beers", and we need to show the brews on queue button
+    print("searchText \(searchText)")
+    
+    if originalBarButtons == nil {
+      originalBarButtons = navigationItem.rightBarButtonItems
+    }
+    if sqlString.indexOf("highlighted = ?") > 0 {
+      print("Both buttons")
+      navigationItem.rightBarButtonItems = originalBarButtons
+    } else {
+      print("just search button")
+      navigationItem.rightBarButtonItems = nil
+      navigationItem.rightBarButtonItem = originalBarButtons?[0]
+    }
   }
   
   @IBAction func onBackClicked(_ sender: Any) {
@@ -130,6 +175,52 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
       navigationItem.hidesSearchBarWhenScrolling = false
     }
   }
+  @IBAction func onShareIconClick(_ sender: Any) {
+    let brewsInTheList = brewController.sections[0]
+    let recordsInTheList = brewsInTheList.records
+    var flaggedBrewIds = [String]()
+    for record in recordsInTheList {
+      print("record \(record.getBeerName()) \(record.highlighted ?? "?")") //Has T for flagged
+      let highlighted = record.highlighted ?? "X"
+      if (highlighted == "T") {
+        if let brew_id = record.brew_id {
+          flaggedBrewIds.append(brew_id)
+        }
+      }
+    }
+    if flaggedBrewIds.count > 6 {
+      let alertViewController = UIAlertController(title: "Too Many", message: "Are you sure your liver can take \(flaggedBrewIds.count) beers?\n\nTry flagging fewer beers.", preferredStyle: .alert)
+      alertViewController.addAction(UIAlertAction.init(title:"OK", style: .cancel) { (action) -> Void in    })
+      return
+    }
+
+    print("this is where we ask about upload to brews on queue")
+    let cardNumber = SharedPreferences.getString(PreferenceKeys.cardNumberPref, "")
+    
+    var cardWarning = ""
+    if (cardNumber == "") {
+      cardWarning = "\n\nYou will need your card number and pin.\n\n(get it working on the Saucer web site first)"
+    }
+    
+    let alertViewController = UIAlertController(title: "Send to Brews on Queue", message: "Do you want to send the flagged beers in this list to `brews on queue`? \(cardWarning)", preferredStyle: .alert)
+    let cancelAction = UIAlertAction.init(title: "CANCEL", style: .cancel) { (action) -> Void in    }
+    let shareAction = UIAlertAction.init(title: "SEND", style: .default, handler: { (action: UIAlertAction!) in
+      print("this is where we do the upload")
+      print("look at how we segue to the logon from the settings menu")
+      let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+      let cardauthViewController = storyBoard.instantiateViewController(withIdentifier: "cardauthForm")
+      cardauthViewController.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+      (cardauthViewController as! CardauthViewController).myMethod(self)
+      (cardauthViewController as! CardauthViewController).setBrewIds(flaggedBrewIds)
+      self.present(cardauthViewController, animated: false)
+    })
+    alertViewController.addAction(cancelAction)
+    alertViewController.addAction(shareAction)
+    present(alertViewController, animated: true, completion: nil)
+
+  }
+
+
 
   func filterContentForSearchText(_ searchText: String) {
     fetchRecords(searchText: searchText)
@@ -152,6 +243,7 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
+    print("MasterViewController.viewWillAppear()")
   }
   
   override func didReceiveMemoryWarning() {
@@ -174,6 +266,7 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
     let cell = tableView.dequeueReusableCell(withIdentifier: "BeerTableViewCell", for: indexPath) as! BeerTableViewCell
     configure(cell, at: indexPath)
     if isFiltering() {
@@ -222,9 +315,11 @@ extension MasterViewController: UISearchResultsUpdating {
     filterContentForSearchText(searchController.searchBar.text!)
   }
   
+  // ***** The holy grail of setting the cell *****
   func configure(_ cell: BeerTableViewCell, at indexPath: IndexPath) {
     let saucerItem = brewController.record(at: indexPath)
-    
+    //print("MasterViewController.configure()" + saucerItem.getBeerName())
+
     if !AppDelegate.currentQueryIsTasted() {
       let abvText = SaucerItem.getAbvText(saucerItem.abv)
       if abvText.count > 0 {
@@ -232,16 +327,44 @@ extension MasterViewController: UISearchResultsUpdating {
       } else {
         cell.beerStyle?.text = saucerItem.style!
       }
+      
+      
+      cell.beerPrice.text = SaucerItem.getPriceText(saucerItem.glass_price)
+      cell.beerPrice.isHidden = false
+
+      let saucerGlassName = saucerItem.getGlassName()
+      var image = UIImage(named: "ic_glass_pint")
+      switch saucerGlassName {
+      case "":
+        cell.beerGlass.isHidden = true
+      case "pint":
+        cell.beerGlass.isHidden = false
+      case "snifter":
+        image = UIImage(named: "ic_glass_snifter")
+        cell.beerGlass.isHidden = false
+      case "wine":
+        image = UIImage(named: "ic_glass_wine")
+        cell.beerGlass.isHidden = false
+      case "stein":
+        image = UIImage(named: "ic_glass_stein")
+        cell.beerGlass.isHidden = false
+      default:
+        cell.beerGlass.isHidden = true
+      }
+      cell.beerGlass.image = image
+
     } else { // If it's a tasted query, show the date, not the style
       if let tastedDateString = saucerItem.created_date { // yyyy MM dd
         if let tastedDate = tastedDateDbFormatter.date(from: tastedDateString) {
           cell.beerStyle?.text = tastedDateOutputFormatter.string(from: tastedDate)
         }
       }
+      cell.beerPrice.isHidden = true
+      cell.beerGlass.isHidden = true
     }
     
     cell.beerName?.text = saucerItem.name
-    cell.beerPrice?.text = ""
+    
     cell.beerFlag.isHidden = (saucerItem.highlighted == "F" || saucerItem.highlighted == nil) ? true : false
     // DRS 20181217 - Indicate beer unavailable
     cell.beerAvailable.isHidden = (saucerItem.active == "T" || saucerItem.active == nil) ? true : false

@@ -75,7 +75,7 @@ class MatchGroup {
           _ = savedComparer.isNonStyleMatch() //Populates fields
           fuzzyFoundList.append(savedComparer)
         }
-        print("Fully contained found was " + String(found) + " comparer technique " + comparer.getLastTechnique())
+        //print("Fully contained found was " + String(found) + " comparer technique " + comparer.getLastTechnique())
       }
 
       // ^We have looped all of the untappd items against this saucer item, twice
@@ -99,10 +99,10 @@ class MatchGroup {
           if let index = untappdMatchItems.index(where: {$0 == highestMatchComparer.getUntappdItem()}) {
             untappdMatchItems.remove(at: index)
           }
-          print("Fuzzy contained found was " + String(found) + " comparer technique " + highestMatchComparer.getLastTechnique())
+          //print("Fuzzy contained found was " + String(found) + " comparer technique " + highestMatchComparer.getLastTechnique())
 
         }
-        print("FOUND>>> " + saucerItem.getSaucerBeerName())
+        //print("FOUND>>> " + saucerItem.getSaucerBeerName())
 
       }
     } // End looping saucer items

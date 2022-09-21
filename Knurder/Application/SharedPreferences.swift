@@ -16,7 +16,7 @@ struct PreferenceKeys {
   static let queryContainerPref = "queryContainerPref"
   
   // Logon
-  static let cardNumberPref = "cardNumberPref"
+  static let authenticationNamePref = "cardNumberPref" //This represents the authentication name, not the card number
   static let storeNumberLogonPref = "storeNumberLogonPref"
   static let tastedCountPref = "tastedCountPref"
   static let userNamePref = "userNamePref"
@@ -25,6 +25,11 @@ struct PreferenceKeys {
 
   static let storeNumberPref = "storeNumberPref"
   static let storeNamePref = "storeNamePref"
+  
+  // Card Logon
+  static let cardNumberPref = "cardNumberActualPref"
+  static let cardPinPref = "cardPinPref"
+  static let storeNumberCardauthPref = "storeNumberCardauthPref"
 
   // Quiz Control
   static let loadedUserPref = "loadedUserPref"
@@ -54,6 +59,8 @@ struct PreferenceKeys {
   static let postReviewTutorialPref = "postReviewTutorialPref"
   static let tastedUploadTutorialPref = "tastedUploadTutorialPref"
   static let applicationAlertPref = "applicationAlertPref"
+  static let analyticsTutorialPref = "analyticsTutorialPref"
+  static let longpressTutorialPref = "longpressTutorialPref"
 
   // Text on Glass
   static let overlayColorPref = "overlayColorPref"
@@ -131,10 +138,20 @@ class SharedPreferences {
       Constants.CredentialsKey.storeNumber:storeNumber
     ]
   }
+  static func getCardCredentials() -> [String: String] {
+    let cardNumber = SharedPreferences.getString(PreferenceKeys.cardNumberPref,"")
+    let storeNumberCardauth = SharedPreferences.getString(PreferenceKeys.storeNumberCardauthPref,"00000")
+    let pin = getPinFromKeychain(cardNumber)
+    return [
+      Constants.CredentialsKey.cardNumber:cardNumber,
+      Constants.CredentialsKey.pin:pin,
+      Constants.CredentialsKey.storeNumberCardauth:storeNumberCardauth
+    ]
+  }
   
   static func getUserDetails() -> [String: String] {
     let email = SharedPreferences.getString(PreferenceKeys.emailPref, "")
-    let ufo = SharedPreferences.getString(PreferenceKeys.cardNumberPref, "000000")
+    let ufo = SharedPreferences.getString(PreferenceKeys.authenticationNamePref, "000000")
     let firstName = SharedPreferences.getString(PreferenceKeys.firstNamePref, "")
     let lastName = SharedPreferences.getString(PreferenceKeys.lastNamePref, "")
     let homeStore = SharedPreferences.getString(PreferenceKeys.storeNamePref, "")
@@ -171,6 +188,28 @@ class SharedPreferences {
     return ""
   }
   
+  static func getPinFromKeychain(_ cardNumberString: String) -> String {
+    let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                kSecAttrAccount as String: cardNumberString,
+                                kSecAttrServer as String: Constants.BaseUrl.cardauth,
+                                kSecMatchLimit as String: kSecMatchLimitOne,
+                                kSecReturnAttributes as String: true,
+                                kSecReturnData as String: true
+    ]
+    var item: CFTypeRef?
+    let status = SecItemCopyMatching(query as CFDictionary, &item)
+    if status == errSecSuccess {
+      // the entry DID exist. Update the entry, even though it might not have changed, the password COULD have changed
+      print("found the item in the keychain")
+      if let existingItem = item as? [String: Any], let pinAccount = existingItem[kSecAttrAccount as String] as? String, let pinData = existingItem[kSecValueData as String] as? Data, let pin = String(data: pinData, encoding: String.Encoding.utf8) {
+        print("account: \(pinAccount)") // password: \(password)")
+        return pin
+      }
+    }
+    print("pin not found")
+    return ""
+  }
+
   static func removePassword() {
     let credentials = SharedPreferences.getCredentials()
     guard let userNameString: String =  credentials[Constants.CredentialsKey.emailOrUsername] else {
@@ -199,6 +238,36 @@ class SharedPreferences {
       }
     } else {
       print("password entry was not found")
+    }
+  }
+  static func removePin() {
+    let cardCredentials = SharedPreferences.getCardCredentials()
+    guard let cardNumberString: String =  cardCredentials[Constants.CredentialsKey.cardNumber] else {
+      return
+    }
+    let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                kSecAttrAccount as String: cardNumberString,
+                                kSecAttrServer as String: Constants.BaseUrl.cardauth,
+                                kSecMatchLimit as String: kSecMatchLimitOne,
+                                kSecReturnAttributes as String: true,
+                                kSecReturnData as String: true
+    ]
+    var item: CFTypeRef?
+    let status = SecItemCopyMatching(query as CFDictionary, &item)
+    if status == errSecSuccess {
+      // the entry DID exist. Delete the entry
+      print("found the item in the keychain")
+      let deleteQuery: [String: Any]  = [kSecClass as String: kSecClassInternetPassword,
+                                         kSecAttrAccount as String: cardNumberString,
+                                         kSecAttrServer as String: Constants.BaseUrl.cardauth]
+      let deleteStatus = SecItemDelete(deleteQuery as CFDictionary)
+      if deleteStatus == errSecSuccess {
+        print("pin removed from the keychain")
+      } else {
+        print("failed to remove the pin from the keychain \(deleteStatus)")
+      }
+    } else {
+      print("pin entry was not found")
     }
   }
 
@@ -262,7 +331,65 @@ class SharedPreferences {
       }
     }
   }
-  
+
+  static func saveValidCardCredentials(_ credentials: [String: String]) {
+    guard let cardNumberString = credentials[Constants.CredentialsKey.cardNumber], let pinString = credentials[Constants.CredentialsKey.pin] else { return }
+    
+    print("saveValidCardCredentials \(cardNumberString) / \(pinString)")
+    let storeNumberCardAuthString = credentials[Constants.CredentialsKey.storeNumberCardauth]
+    
+    // This user name, etc, has been accepted by the server, so save it in shared preferences
+    SharedPreferences.putString(PreferenceKeys.cardNumberPref, cardNumberString)
+    SharedPreferences.putString(PreferenceKeys.storeNumberCardauthPref, storeNumberCardAuthString!)
+    
+    // Now work on the password in the keychain
+    
+    // first check for existing entry in the keychain
+    let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                kSecAttrAccount as String: cardNumberString,
+                                kSecAttrServer as String: Constants.BaseUrl.cardauth,
+                                kSecMatchLimit as String: kSecMatchLimitOne,
+                                kSecReturnAttributes as String: true,
+                                kSecReturnData as String: true
+    ]
+    var item: CFTypeRef?
+    let status = SecItemCopyMatching(query as CFDictionary, &item)
+    if status == errSecSuccess {
+      // the entry DID exist. Update the entry, even though it might not have changed, the password COULD have changed
+      print("found the item in the keychain")
+      if let existingItem = item as? [String: Any], let account = existingItem[kSecAttrAccount as String] as? String, let pinData = existingItem[kSecValueData as String] as? Data, let _ = String(data: pinData, encoding: String.Encoding.utf8) {
+        print("account: \(account)") // password: \(password)")
+      }
+      let pinData = pinString.data(using: String.Encoding.utf8)!
+      let updateQuery: [String: Any]  = [kSecClass as String: kSecClassInternetPassword,
+                                         kSecAttrAccount as String: cardNumberString,
+                                         kSecAttrServer as String: Constants.BaseUrl.cardauth]
+      let updateAttributes: [String: Any] = [kSecAttrAccount as String: cardNumberString,
+                                             kSecAttrServer as String: Constants.BaseUrl.cardauth,
+                                             kSecValueData as String: pinData]
+      let updateStatus = SecItemUpdate(updateQuery as CFDictionary, updateAttributes as CFDictionary)
+      if updateStatus == errSecSuccess {
+        print("cardnumber pin updated in keychain")
+      } else {
+        print("failed to update pin in keychain \(updateStatus)")
+      }
+    } else {
+      // the entry DID NOT exist, so create it
+      print("item NOT found in the keychain")
+      let pinData = pinString.data(using: String.Encoding.utf8)!
+      let addQuery: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                     kSecAttrAccount as String: cardNumberString,
+                                     kSecAttrServer as String: Constants.BaseUrl.cardauth,
+                                     kSecValueData as String: pinData]
+      let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+      if addStatus == errSecSuccess {
+        print("cardnumber pin added to keychain")
+      } else {
+        print("cardnumber ping failed to get added to keychain \(addStatus)")
+      }
+    }
+  }
+
   static func saveUserStats(_ userStats: [String: String]?) {
     if let stats = userStats {
       for stat in stats {

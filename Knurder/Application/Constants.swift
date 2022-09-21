@@ -85,6 +85,9 @@ struct Constants {
     static let password = "password"
     static let mou = "mou"
     static let storeNumber = "storeNumber"
+    static let cardNumber = "cardNumber"
+    static let pin = "pin"
+    static let storeNumberCardauth = "storeNumberCardauth"
   }
   
   struct UserDetailsKey {
@@ -106,12 +109,20 @@ struct Constants {
     static let quizPage = "https://www.saucerknurd.com/glassnite/quiz/"
     static let quizUserLandingPage = "http://www.saucerknurd.com/glassnite/beerknurd-glassnite.php?"
     static let untappd = "https://business.untappd.com"
+    static let untappdBeer = "https://untappd.com/beer/"
+    static let analytics = "http://saucer.rechlin.net/analysis?user="
+    static let cardauth = "https://www.beerknurd.com/tapthatapp/memberQueue.php"
+    static let visitorForm = "https://www.beerknurd.com/tapthatapp/classes/getStore.php?loc="
+    static let kiosk = "https://www.beerknurd.com/tapthatapp/kiosk.php"
+    static let cardLoginForm = "https://www.beerknurd.com/tapthatapp/signin.php"
+    static let queSave = "https://www.beerknurd.com/tapthatapp/queue-up-brew.php?action=member"
   }
   
   struct Messages {
     static let GOOD_BEER_LIST = "You've got the current beer list!"
     static let GOOD_BEER_MENU_LIST = "You've got the current beer list plus details!"
     static let GOOD_TASTED_LIST = "You've got your tasted list!"
+    static let GOOD_UPLOAD = "Your flagged beers are queued-up!"
   }
   
   static let ONE_DAY_IN_SECONDS = 24 * 60 * 60

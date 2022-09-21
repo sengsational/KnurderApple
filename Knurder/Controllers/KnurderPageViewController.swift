@@ -19,6 +19,8 @@ class KnurderPageViewController: UIViewController {
   @IBOutlet weak var beerPlace: UILabel!
   @IBOutlet weak var beerTastedDate: UILabel!
   @IBOutlet weak var beerFlagged: UIImageView!
+  @IBOutlet weak var beerGlass: UIImageView!
+  @IBOutlet weak var beerPrice: UILabel!
   
   var beerIndexPath: IndexPath!
   var recordCount: Int!
@@ -29,8 +31,14 @@ class KnurderPageViewController: UIViewController {
     override func viewDidLoad() {
       super.viewDidLoad()
       
-      let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPress(_:)))
-      scrollView?.addGestureRecognizer(longPressRecognizer)
+      let longPressFlagRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressFlag(_:)))
+      beerDescription?.addGestureRecognizer(longPressFlagRecognizer)
+      beerDescription?.isUserInteractionEnabled = true
+
+      let longPressUntappdRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressUntappd(_:)))
+      beerName?.addGestureRecognizer(longPressUntappdRecognizer)
+      beerName?.isUserInteractionEnabled = true
+
 
       
       self.recordCount = brewController.sections[0].numberOfRecords
@@ -69,8 +77,44 @@ class KnurderPageViewController: UIViewController {
         beerPlace.textColor = UIColor(named: "colorsetTastedText")
         beerAbv.textColor = UIColor(named: "colorsetTastedText")
       }
+      
+      let saucerGlassName = saucerItem.getGlassName()
+      var image = UIImage(named: "ic_glass_pint")
+      switch saucerGlassName {
+      case "":
+        beerGlass.isHidden = true
+      case "pint":
+        beerGlass.isHidden = false
+      case "snifter":
+        image = UIImage(named: "ic_glass_snifter")
+        beerGlass.isHidden = false
+      case "wine":
+        image = UIImage(named: "ic_glass_wine")
+        beerGlass.isHidden = false
+      case "stein":
+        image = UIImage(named: "ic_glass_stein")
+        beerGlass.isHidden = false
+      default:
+        beerGlass.isHidden = true
+      }
+      beerGlass.image = image
+      
+      beerPrice.text = SaucerItem.getPriceText(saucerItem.glass_price)
+      
+      print("KnurderPageViewController.viewDidLoad() " + saucerItem.getBeerName() + " " + saucerGlassName)
     }
 
+  override func viewDidAppear(_ animated: Bool) {
+    let longpressTutorial = SharedPreferences.getString(PreferenceKeys.longpressTutorialPref, "")
+    if longpressTutorial.count == 0 && beerGlass.isHidden == false {
+      SharedPreferences.putString(PreferenceKeys.longpressTutorialPref, "F")
+      let alertViewController = UIAlertController(title: "Long Press Update", message: "As always, a long press on the DESCRIPTION will flag/unflag the beer.\n\nWhat's new is for beers where you see a price, a long press on the BEER NAME will take you directly to that beer in Untappd!", preferredStyle: .alert)
+      let okAction = UIAlertAction.init(title: "OK", style: .default) { (action) -> Void in
+      }
+      alertViewController.addAction(okAction)
+      present(alertViewController, animated: true, completion: nil)
+    }
+  }
   
     @IBAction func handlePinch(_ gesture: UIPinchGestureRecognizer) {
       guard let gestureView = gesture.view else {
@@ -105,8 +149,32 @@ class KnurderPageViewController: UIViewController {
 
 
 extension KnurderPageViewController {
-  @objc func longPress(_ gesture: UILongPressGestureRecognizer) {
+  @objc func longPressUntappd(_ gesture: UILongPressGestureRecognizer) {
     if gesture.state == UIGestureRecognizerState.began {
+      print("KnurderPageViewController.longPressUntappd()")
+      let saucerItem = brewController.record(at: beerIndexPath!)
+      if let beerNumber = saucerItem.untappd_beer {
+        // first try to open local app
+        var appWorked = false
+        if let localAppKey = URL(string: "untappd://beer/" + beerNumber) {
+          if UIApplication.shared.canOpenURL(localAppKey){
+            UIApplication.shared.open(localAppKey)
+            appWorked = true
+          }
+        }
+        // if app didn't work, try just a web page
+        if !appWorked {
+          if let url = URL(string: Constants.BaseUrl.untappdBeer + beerNumber) {
+            UIApplication.shared.open(url)
+          }
+        }
+      }
+    }
+  }
+  
+  @objc func longPressFlag(_ gesture: UILongPressGestureRecognizer) {
+    if gesture.state == UIGestureRecognizerState.began {
+      print("KnurderPageViewController.longPressFlag()")
       let saucerItem = brewController.record(at: beerIndexPath!)
       // Get the highlighted flag from the database (should be the same as the cell)
       let dbFlag = saucerItem.highlighted

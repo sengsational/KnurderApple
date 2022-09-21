@@ -19,14 +19,18 @@ class BeerTableViewCell: UITableViewCell {
   @IBOutlet weak var beerAvailable: UIImageView!
 
   var saucerItem: SaucerItem? {
+    // THIS METHOD APPEARS NOT TO RUN
+    // See: MasterViewController.configure()
     didSet {
-      //print("BeerTableViewCell didSet{)")
-      guard let saucerItem = saucerItem else {return}
-      //print("BeerTableViewCell didSet()")
-      beerName.text = saucerItem.name
-      beerStyle.text = saucerItem.style
-      beerPrice.text = saucerItem.glass_price
-      // TODO: manage image views
+      print("BeerTableViewCell.didSet saucerItem << THIS IS NEVER CALLED")
+      guard saucerItem != nil else {
+        print("BeerTableViewCell didSet() with bad saucerItem")
+        return
+        
+      }
+      //beerName.text = saucerItem.name
+      //beerStyle.text = saucerItem.style
+      //beerPrice.text = saucerItem.glass_price
     }
   }
 
@@ -38,20 +42,14 @@ class BeerTableViewCell: UITableViewCell {
     }
   }
   */
-  
+
   override func awakeFromNib() {
     super.awakeFromNib()
-    //print("BeerTableViewCell awake")
-    // Initialization code
   }
 
   override func setSelected(_ selected: Bool, animated: Bool) {
     //super.setSelected(selected, animated: animated)
-    //print("BeerTableViewCell setSelected")
-    //print("use brewController \(brewController)")
-    // Configure the view for the selected state
   }
-
 }
 
 

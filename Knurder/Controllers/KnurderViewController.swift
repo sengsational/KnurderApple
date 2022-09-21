@@ -85,7 +85,7 @@ class KnurderViewController: UITableViewController {
   }
   
   func filterContentForSearchText(_ searchText: String) {
-    print("TODO: implement search")
+    print("TOXO: implement search")
     //tableView.reloadData()
   }
   
