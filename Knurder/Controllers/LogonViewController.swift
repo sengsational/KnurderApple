@@ -126,7 +126,6 @@ class LogonViewController: UIViewController, UITableViewDelegate, UITableViewDat
         print("logging in with \(cardNumber) \(password) \(mou) \(storeName) \(storeNumber)")
         dismiss(animated: false, completion: nil)
         LoaderController.sharedInstance.showLoader(viewController: viewController, title: "Please Wait", message: "Getting your tasted list from the UFO site")
-        //let credentials = [Constants.CredentialsKey.cardNumber:"10126",Constants.CredentialsKey.password:"secret",Constants.CredentialsKey.mou:"0", Constants.CredentialsKey.storeNumber:"13888"]
         let credentials = [Constants.CredentialsKey.emailOrUsername:cardNumber,Constants.CredentialsKey.password:password,Constants.CredentialsKey.mou:mou, Constants.CredentialsKey.storeNumber:storeNumber]
         TransactionDriver.fetchTasted(credentials, viewController)
       }

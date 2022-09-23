@@ -18,6 +18,9 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
   @IBOutlet weak var buttonShowPinCheckbox: UIButton!
   @IBOutlet weak var textFieldCardNumber: UITextField!
   @IBOutlet weak var textFieldPin: UITextField!
+  @IBOutlet weak var buttonMouCheckbox: UIButton!
+  @IBOutlet weak var labelMou: UILabel!
+
   @IBOutlet weak var labelBackCa: UILabel!
 //
   weak var masterViewController: MasterViewController!
@@ -31,6 +34,7 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
     self.tableViewSelectStoreCa.dataSource = self
     
     initializeLogonStoreButton()
+    labelMou.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CardauthViewController.tapFunction)))
     labelBackCa.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CardauthViewController.backFunction)))
     
     populateUserInfo()
@@ -48,6 +52,10 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
     }
   }
 
+  @objc func tapFunction(sender:UITapGestureRecognizer) {
+    Toast.show(message: "Leave unchecked unless you know what MOU is and are one.", controller: self)
+  }
+  
   @objc func backFunction(sender:UITapGestureRecognizer) {
     dismiss(animated: false, completion: nil)
   }
@@ -77,6 +85,9 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
         self.hightTableViewCa.constant = 170
       }
     })
+  }
+  @IBAction func onClickMouCheckbox(_ sender: Any) {
+    swapCheckbox(self.buttonMouCheckbox)
   }
   
   //@IBAction func onClickShowPasswordCheckbox(_ sender: Any) {
@@ -109,6 +120,7 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
   @IBAction func onClickCardauthSignIn(_ sender: Any) {
     let cardNumber = self.textFieldCardNumber.text
     let pin = self.textFieldPin.text
+    let mou = (self.buttonMouCheckbox.currentTitle == "√") ? "1":"0"
     let storeName = self.buttonSelectStoreCa.currentTitle
     
     
@@ -122,7 +134,7 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
         dismiss(animated: false, completion: nil)
         let brewCount = String(brewIds.count)
         LoaderController.sharedInstance.showLoader(masterViewController: masterViewController, title: "Please Wait", message: "Sending \(brewCount) flagged beers to brews on queue...")
-        let credentialsCa = [Constants.CredentialsKey.cardNumber:cardNumber,Constants.CredentialsKey.pin:pin,Constants.CredentialsKey.storeNumberCardauth:storeNumberCardauth]
+        let credentialsCa = [Constants.CredentialsKey.cardNumber:cardNumber,Constants.CredentialsKey.pin:pin,Constants.CredentialsKey.storeNumberCardauth:storeNumberCardauth,Constants.CredentialsKey.mou:mou]
         TransactionDriver.uploadBrewsOnQueue(credentialsCa, masterViewController, brewIds)
       }
     }

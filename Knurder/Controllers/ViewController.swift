@@ -75,6 +75,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
   */
   
   override func viewDidAppear(_ animated: Bool) {
+    print("ViewController viewDidAppear()")
     let timesUsed = SharedPreferences.getInt(PreferenceKeys.timesRunCounter, 0)
 
     let applicationAlert = SharedPreferences.getString(PreferenceKeys.applicationAlertPref, "")
@@ -99,6 +100,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     } else if AppDelegate.oldListCheck { // always true on app startup
       listUpdateAsked = runOldListCheck()
       AppDelegate.oldListCheck = false
+    }
+    if SharedPreferences.getString(PreferenceKeys.mouLoginErrorPref, "") == "true" {
+        SharedPreferences.putString(PreferenceKeys.mouLoginErrorPref, "false")
+        // There was a log on attempt with MOU that failed.  Ask for help.
+            print("alertMouLoginFailed() running")
+            let message = "I am not able to test MOU login myself, because I'm not there yet.  If you really are an MOU and you want this to work, I probably can get it working if you help me.  Look up 'ufoknurder' on Facebook, or email me at knurder.frog4food@recursor.net"
+            let alertDialog = UIAlertController(title: "MOU Logon Testing", message: message, preferredStyle: .alert)
+            alertDialog.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action: UIAlertAction!) in
+              print("OK PRESSED")
+            }))
+          present(alertDialog, animated: true, completion: nil)
+    } else {
+      print("no mouLoginFailPreference")
     }
     if !listUpdateAsked && (timesUsed == 5 || timesUsed == 25 || timesUsed == 62 || timesUsed == 100) {
       AppDelegate.incrementUsageCounter(force: true)

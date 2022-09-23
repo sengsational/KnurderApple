@@ -264,7 +264,7 @@ class HtmlParsing {
     let cardNumber = credentials["cardNumber"] ?? "000000"
     paramList["homestore"] = "%" + storeTwoChar
     paramList["cardNumber"] = cardNumber
-    paramList["mouOpt"] = "no"
+    paramList["mouOpt"] = credentials["mou"] ?? "no"
     paramList["submit"] = "Beam+Me+Up!"
     paramList["cardNum"] = "%" + storeTwoChar + cardNumber + "=?"
     return paramList

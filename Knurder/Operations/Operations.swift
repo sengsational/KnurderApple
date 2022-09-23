@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+
 
 class PostReviewsOperation: AsyncOperation {
   var saucerItemsx: [SaucerItem]
@@ -604,7 +606,7 @@ class FinishOperation: AsyncOperation {
   }
   
   override func main() {
-    print("FinishOperaiton.main() - message \(message) uiParameters description " + uiParameters.debugDescription)
+    print("FinishOperaiton.main() - message \(message) uiParameters description " + uiParameters.debugDescription + "clearLoader \(clearLoader) viewControllerPouplated \(viewControllerPouplated)")
     if clearLoader {
       if viewControllerPouplated {
         LoaderController.sharedInstance.removeLoader(viewController: self.viewController, message, uiParameters: uiParameters)
@@ -615,8 +617,28 @@ class FinishOperation: AsyncOperation {
           }
           AppDelegate.quizCheck = false // Only run once per session
         }
+        
       } else {
         LoaderController.sharedInstance.removeLoader(masterViewController: self.masterViewController, message, uiParameters: uiParameters)
+        /*
+        if SharedPreferences.getString(PreferenceKeys.mouLoginErrorPref, "") == "true" {
+          DispatchQueue.main.async {
+            SharedPreferences.putString(PreferenceKeys.mouLoginErrorPref, "false")
+            // There was a log on attempt with MOU that failed.  Ask for help.
+            print("alertMouLoginFailed() running")
+            sleep(3)
+            let message = "I am not able to test MOU login myself.  If you really are an MOU and you want this to work, I probably can get it working if you help me.  Look up 'ufoknurder' on Facebook, or email me at knurder.frog4food@recursor.net"
+            let alertDialog = UIAlertController(title: "MOU Logon Testing", message: message, preferredStyle: .alert)
+            alertDialog.addAction(UIAlertAction(title: "OK", style: .default, handler: {(action: UIAlertAction!) in
+              print("OK PRESSED")
+            }))
+            self.masterViewController.present(alertDialog, animated: true, completion: nil)
+          }
+        } else {
+          print("no mouLoginFailPreference")
+        }
+        */
+        
       }
     }
     print("--------------------------1-FINISH OPERATION IS STARTING and ENDING-------------------------")
@@ -755,7 +777,13 @@ class PostFormOperation: AsyncOperation {
             self.cancelOperations(queue: queue)
           }
           print("Form posted but *NOT* logged in: the response page did not have 'user-info' on it.  We tried \(self.credentials["emailOrUsername"] ?? "") \(self.credentials["password"] ?? "")")
-          //print("----html----\n]n \(html)")
+
+          // For MOU login attempt, set up a flag so we can ask the user to help beta test
+          if let _mou = self.credentials["mou"] {
+            if "1" == _mou {
+              SharedPreferences.putString(PreferenceKeys.mouLoginErrorPref, "true")
+            }
+          }
         }
       }
       print("--------------------------2-POST FORM PAGE IS DONE-------------------------")
@@ -1035,7 +1063,7 @@ class PostCardFormLoginOperation: AsyncOperation {
     var finishedString = ""
     for item in formFields {
       if item.key == "cardData" {
-        urlField += item.value + "=?"
+        urlField += item.value
       }
       let encItemKey = item.key.replacingOccurrences(of: "[", with: "%5B").replacingOccurrences(of: "]", with: "%5D")
       var encItemVal = item.value.replacingOccurrences(of: "%", with: "%25")
@@ -1052,7 +1080,7 @@ class PostCardFormLoginOperation: AsyncOperation {
     //Append to the url
     print("urlField [\(urlField)]")
     //let newUrlString = postRequest.url!.absoluteString + urlField
-    postRequest.url = postRequest.url?.appending("cd", value: "%ch21611=?")
+    postRequest.url = postRequest.url?.appending("cd", value: urlField)
     //postRequest.url = postRequest.url?.appending("no", value: "0")
     //postRequest.url = URL(string: newUrlString)
 
@@ -1062,9 +1090,6 @@ class PostCardFormLoginOperation: AsyncOperation {
     //postRequest.url.self.
     
     print("going to post  \(postRequest.url?.debugDescription ?? "not avail")")
-    print("show me \(postRequest)")
-
-    
   }
 
   override func main() {
@@ -1091,6 +1116,14 @@ class PostCardFormLoginOperation: AsyncOperation {
           print("--------------------------1-POST CARD LOGIN PAGE FAILED ------------------------")
           //print("FORM LOGIN HTML\n\n\n \(returnData) \n\n\nENDHTML")
           // TODO: Let the user know the credentials are bad
+          
+          // For MOU login attempt, set up a flag so we can ask the user to help beta test
+          if let _mou = self.credentials["mou"] {
+            if "1" == _mou {
+              SharedPreferences.putString(PreferenceKeys.mouLoginErrorPref, "true")
+            }
+          }
+
           self.cancelOperations(queue: self.mQueue)
           self.state = .finished
           return
@@ -1197,7 +1230,7 @@ class UploadFlaggedBeersOperation: AsyncOperation {
   
   override func main() {
     print("--------------------------1-UPLOAD FLAGGED PAGE IS STARTING-- \(brewIds.count) iterations -----------------------")
-    let storeNumber = credentials["storeNumberCardauth"] ?? "13888"
+    let storeNumber = SharedPreferences.getString(PreferenceKeys.storeNumberPref, "13888") //The list store number, not the cardauth store number
     
     var dataTaskList = [URLSessionDataTask]()
     
@@ -1210,10 +1243,11 @@ class UploadFlaggedBeersOperation: AsyncOperation {
           print("the brewId " + brewId + " will be posted")
         }
       }
-      getRequest.url = getRequest.url?.appending("brewID", value: brewId)
-      getRequest.url = getRequest.url?.appending("storeID", value: storeNumber)
+      var eachGetRequest = getRequest
+      eachGetRequest.url = eachGetRequest.url?.appending("brewID", value: brewId)
+      eachGetRequest.url = eachGetRequest.url?.appending("storeID", value: storeNumber)
       
-      let dataTask = defaultSession.dataTask(with: getRequest) {data, response, error in
+      let dataTask = defaultSession.dataTask(with: eachGetRequest) {data, response, error in
         guard
           let responseUrl = response?.url,
           let data = data,

@@ -30,6 +30,7 @@ struct PreferenceKeys {
   static let cardNumberPref = "cardNumberActualPref"
   static let cardPinPref = "cardPinPref"
   static let storeNumberCardauthPref = "storeNumberCardauthPref"
+  static let mouLoginErrorPref = "mouLoginErrorPref"
 
   // Quiz Control
   static let loadedUserPref = "loadedUserPref"

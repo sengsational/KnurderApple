@@ -1815,6 +1815,47 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UQ8-yy-b9U">
                                 <rect key="frame" x="60" y="127" width="255" height="571"/>
                                 <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="YnX-MS-8uf" userLabel="Mou Stack">
+                                        <rect key="frame" x="20" y="143" width="65" height="17"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nWl-n8-0s7" userLabel="MOU Checkbox Ca">
+                                                <rect key="frame" x="0.0" y="1" width="15" height="15"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="15" id="OnZ-gU-VL0"/>
+                                                    <constraint firstAttribute="width" constant="15" id="ZkC-ik-Jal"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="10"/>
+                                                <size key="titleShadowOffset" width="1" height="1"/>
+                                                <state key="normal">
+                                                    <color key="titleColor" systemColor="darkTextColor"/>
+                                                    <color key="titleShadowColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                        <real key="value" value="2"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="2"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                        <color key="value" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="onClickMouCheckbox:" destination="UxD-hm-xrd" eventType="touchUpInside" id="ypC-E6-qLh"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MOU?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJr-Sc-9G4">
+                                                <rect key="frame" x="25" y="0.0" width="40" height="17"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="LJr-Sc-9G4" firstAttribute="leading" secondItem="nWl-n8-0s7" secondAttribute="trailing" constant="10" id="yz7-dG-5UO"/>
+                                        </constraints>
+                                    </stackView>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Card Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ATg-7d-HZs" userLabel="Card Number">
                                         <rect key="frame" x="20" y="55" width="215" height="34"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1997,6 +2038,8 @@
                                     <constraint firstItem="F3p-is-sFA" firstAttribute="leading" secondItem="UQ8-yy-b9U" secondAttribute="leading" constant="20" id="HSA-xj-7EJ"/>
                                     <constraint firstItem="F3p-is-sFA" firstAttribute="top" secondItem="Bgm-QQ-TcP" secondAttribute="bottom" constant="20" id="Jhu-lP-5eB"/>
                                     <constraint firstAttribute="trailing" secondItem="Bgm-QQ-TcP" secondAttribute="trailing" constant="20" id="Jih-iH-niZ"/>
+                                    <constraint firstItem="YnX-MS-8uf" firstAttribute="top" secondItem="zY7-7m-mpZ" secondAttribute="bottom" constant="10" id="Pn2-K2-93e"/>
+                                    <constraint firstItem="YnX-MS-8uf" firstAttribute="leading" secondItem="UQ8-yy-b9U" secondAttribute="leading" constant="20" id="Vg4-6e-3Xw"/>
                                     <constraint firstAttribute="trailing" secondItem="ATg-7d-HZs" secondAttribute="trailing" constant="20" id="VzK-vE-VAg"/>
                                     <constraint firstItem="0RN-Ev-jvq" firstAttribute="top" secondItem="UQ8-yy-b9U" secondAttribute="top" id="XV5-nT-pwf"/>
                                     <constraint firstItem="boh-WK-Z8D" firstAttribute="leading" secondItem="UQ8-yy-b9U" secondAttribute="leading" constant="20" id="aDu-I8-TSM"/>
@@ -2026,10 +2069,12 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="buttonMouCheckbox" destination="nWl-n8-0s7" id="IlF-NV-A9l"/>
                         <outlet property="buttonSelectStoreCa" destination="w9G-OA-QAg" id="pYb-tu-vgs"/>
                         <outlet property="buttonShowPinCheckbox" destination="Xph-bl-IFx" id="Ugr-Xx-1Fu"/>
                         <outlet property="hightTableViewCa" destination="Yot-Qd-9xQ" id="228-bb-csh"/>
                         <outlet property="labelBackCa" destination="GFf-j1-Juf" id="xkq-qA-jmH"/>
+                        <outlet property="labelMou" destination="LJr-Sc-9G4" id="Sme-Sf-5hm"/>
                         <outlet property="popupViewCa" destination="UQ8-yy-b9U" id="Ae6-dd-2kB"/>
                         <outlet property="tableViewSelectStoreCa" destination="Bgm-QQ-TcP" id="76h-Lf-UNG"/>
                         <outlet property="textFieldCardNumber" destination="ATg-7d-HZs" id="jg1-7U-vyr"/>

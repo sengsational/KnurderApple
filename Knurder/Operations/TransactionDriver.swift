@@ -172,8 +172,10 @@ class TransactionDriver {
     let uploadOpQueue = OperationQueue()
     print("credentials \(credentials.debugDescription)")
     print("brewIds: \(brewIds.debugDescription)")
-    let storeNumber = credentials["storeNumberCardauth"] ?? "13888"
+    //let storeNumber = credentials["storeNumberCardauth"] ?? "13888" //WRONG!  Use the store number of the BEER LIST, not card auth
+    let storeNumber = SharedPreferences.getString(PreferenceKeys.storeNumberPref, "13888")
     let storeVarChar = StoreNameHelper.lookupStoreVarchar(forNumber: storeNumber)
+    
     // MARK: Define the URLSession
     let config = URLSessionConfiguration.default
     config.waitsForConnectivity = false
