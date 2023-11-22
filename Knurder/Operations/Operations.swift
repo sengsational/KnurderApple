@@ -1066,9 +1066,10 @@ class PostCardFormLoginOperation: AsyncOperation {
         urlField += item.value
       }
       let encItemKey = item.key.replacingOccurrences(of: "[", with: "%5B").replacingOccurrences(of: "]", with: "%5D")
-      var encItemVal = item.value.replacingOccurrences(of: "%", with: "%25")
+      //var encItemVal = item.value.replacingOccurrences(of: "%", with: "%25")
       //encItemVal = encItemVal.replacingOccurrences(of: "+", with: "%2B")
-      encItemVal = encItemVal.replacingOccurrences(of: "!", with: "%21")
+      var encItemVal = item.value.replacingOccurrences(of: "!", with: "%21")
+      encItemVal = encItemVal.replacingOccurrences(of: "+", with: "%2B")
       encItemVal = encItemVal.replacingOccurrences(of: "=", with: "%3D")
       encItemVal = encItemVal.replacingOccurrences(of: "?", with: "%3F")
       finishedString = finishedString + encItemKey + "=" + encItemVal + "&"
@@ -1078,10 +1079,13 @@ class PostCardFormLoginOperation: AsyncOperation {
     print("#3parameterString [" + finishedString + "]")
     
     //Append to the url
-    print("urlField [\(urlField)]")
+    var urlFieldLocal = urlField + "=?"
+    urlFieldLocal = urlFieldLocal.replacingOccurrences(of: "%25", with: "%")
+    print("urlFieldLocal [\(urlFieldLocal)]")
+    
     //let newUrlString = postRequest.url!.absoluteString + urlField
-    postRequest.url = postRequest.url?.appending("cd", value: urlField)
-    //postRequest.url = postRequest.url?.appending("no", value: "0")
+    postRequest.url = postRequest.url?.appending("cd", value: urlFieldLocal)
+    postRequest.url = postRequest.url?.appending("no", value: "0")
     //postRequest.url = URL(string: newUrlString)
 
     //let something = postRequest.url?.appendingQueryItem("cd", value: urlField)

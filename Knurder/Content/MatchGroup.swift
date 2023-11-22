@@ -60,7 +60,7 @@ class MatchGroup {
       
       for (_, untappdItem) in untappdMatchItems.enumerated(){
         let comparer = MatchComparer(_saucerItem: saucerItem, _untappdItem: untappdItem)
-        if comparer.isFullyContained() {
+        if (comparer.isFullyContained() || comparer.isHardMatch()) {
           saucerItemsFound.append(saucerItem)
           untappdItemsFound.append(untappdItem)
           foundResults.append(untappdItem.matchFieldArray(saucerName: saucerItem.getName()))

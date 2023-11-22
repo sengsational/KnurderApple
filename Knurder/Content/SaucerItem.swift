@@ -83,6 +83,8 @@ class SaucerItem: Record, CustomStringConvertible {
     timestamp = row["timestamp"]
     untappd_beer = row["untappd_beer"]
     untappd_brewery = row["untappd_brewery"]
+    que_stamp = row["que_stamp"]
+    currently_queued = row["currently_queued"]
     super.init(row: row)
   }
 
@@ -118,6 +120,8 @@ class SaucerItem: Record, CustomStringConvertible {
       container["timestamp"] = timestamp
       container["untappd_beer"] = untappd_beer
       container["untappd_brewery"] = untappd_brewery
+      container["que_stamp"] = que_stamp
+      container["currently_queued"] = currently_queued
   }
 
   override func didInsert(with rowID: Int64, for column: String?) {
@@ -146,7 +150,8 @@ class SaucerItem: Record, CustomStringConvertible {
       
       if aValue!.hasSuffix("Flight") {
         override_flight = true
-        //print("OVERRIDE FLIGHT!!")
+        print("OVERRIDE FLIGHT!!   \(aValue ?? "")")
+        self.style = "Flight"
       } else {
         override_flight = false
       }
@@ -154,6 +159,7 @@ class SaucerItem: Record, CustomStringConvertible {
       if aValue!.hasSuffix("Float") || aValue!.hasSuffix("-mosa") {
         override_mix = true
         //print("OVERRIDE MIX!!")
+        self.style = "Mix"
       } else {
         override_mix = false
       }
@@ -213,7 +219,7 @@ class SaucerItem: Record, CustomStringConvertible {
         return
       }
       let _country = country.trim()
-      if _country == "United States" || _country == "UnitedStates" || _country == "None" {
+      if _country == "United States" || _country == "UnitedStates" || _country == "USA" || _country == "None" {
         self.is_import = "F"
       } else {
         self.is_import = "T"
@@ -235,13 +241,16 @@ class SaucerItem: Record, CustomStringConvertible {
   
   public var style: String? {       //from web
     didSet(aValue) {
-      guard let container = self.containerx else {return}
-      guard container != "draught" else {return}
+      //print("setting style")
+      //guard let container = self.containerx else {return}
+      //guard container != "draught" else {return}
+      //print("container was not draught")
       if self.override_flight == nil {self.override_flight = false}
       if self.override_mix == nil {self.override_mix = false}
-      
+      //print("override_flight was \(override_flight) for \(self.name)")
       if override_flight! {
         self.style = "Flight"
+        //print("setting style override: \(self.name ?? ("name not found")) override was: \(override_flight ?? false)")
       }
       if override_mix! {
         self.style = "Mix"
@@ -374,12 +383,14 @@ class SaucerItem: Record, CustomStringConvertible {
   var review_flag: String? //added during database population
   var untappd_beer: String?
   var untappd_brewery: String?
-  
+  var que_stamp: String?          //DRS20231121
+  var currently_queued: String?   //DRS20231121
+
   var brew_plate: String? //not in the database
   var user_plate: String? //not in the database
   
   public var description: String {
-    return "_id: \(id as Optional),name: \(name as Optional), store_id: \(store_id as Optional), brew_id: \(brew_id as Optional), brewer: \(brewer as Optional), city: \(city as Optional), isLocal: \(is_local as Optional), country: \(country as Optional), container: \(containerx as Optional), style: \(style as Optional), descript: \(descriptionx as Optional), abv: \(abv as Optional), stars: \(stars as Optional), reviews: \(reviews as Optional), created: \(created as Optional), createdDate: \(created_date as Optional), newArrival: \(new_arrival as Optional), isImport: \(is_import as Optional), active: \(active as Optional), tasted: \(tasted as Optional), store_name: \(store_name as Optional), override_tap: \(override_tap as Optional), override_flight: \(override_flight as Optional), overide_mix: \(override_mix as Optional), highlighted: \(highlighted as Optional), glassSize: \(glass_size as Optional), glassPrice: \(glass_price as Optional), userReview: \(user_review as Optional), userStars: \(user_stars as Optional), reviewId: \(review_id as Optional), reviewFlag: \(review_flag as Optional), timestamp: \(timestamp as Optional), untappd_beer: \(untappd_beer as Optional), untappd_brewery: \(untappd_brewery as Optional)"
+    return "_id: \(id as Optional),name: \(name as Optional), store_id: \(store_id as Optional), brew_id: \(brew_id as Optional), brewer: \(brewer as Optional), city: \(city as Optional), isLocal: \(is_local as Optional), country: \(country as Optional), container: \(containerx as Optional), style: \(style as Optional), descript: \(descriptionx as Optional), abv: \(abv as Optional), stars: \(stars as Optional), reviews: \(reviews as Optional), created: \(created as Optional), createdDate: \(created_date as Optional), newArrival: \(new_arrival as Optional), isImport: \(is_import as Optional), active: \(active as Optional), tasted: \(tasted as Optional), store_name: \(store_name as Optional), override_tap: \(override_tap as Optional), override_flight: \(override_flight as Optional), overide_mix: \(override_mix as Optional), highlighted: \(highlighted as Optional), glassSize: \(glass_size as Optional), glassPrice: \(glass_price as Optional), userReview: \(user_review as Optional), userStars: \(user_stars as Optional), reviewId: \(review_id as Optional), reviewFlag: \(review_flag as Optional), timestamp: \(timestamp as Optional), untappd_beer: \(untappd_beer as Optional), untappd_brewery: \(untappd_brewery as Optional), que_stamp: \(que_stamp as Optional), currently_queued: \(currently_queued as Optional)"
   }
   
   // MARK - Derived outputs

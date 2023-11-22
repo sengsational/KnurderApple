@@ -264,9 +264,14 @@ class HtmlParsing {
     let cardNumber = credentials["cardNumber"] ?? "000000"
     paramList["homestore"] = "%" + storeTwoChar
     paramList["cardNumber"] = cardNumber
-    paramList["mouOpt"] = credentials["mou"] ?? "no"
+    paramList["mouOpt"] = "no"
     paramList["submit"] = "Beam+Me+Up!"
-    paramList["cardNum"] = "%" + storeTwoChar + cardNumber + "=?"
+    if (credentials["mou"] == "no" || credentials["mou"] == "0") {
+      paramList["cardNum"] = "%" + storeTwoChar + cardNumber + "=?"
+    } else {
+      paramList["cardNum"] = "%mou" + cardNumber + "=?"
+      paramList["mouOpt"] = "yes"
+    }
     return paramList
   }
   static func getParamListFromKioskHtml(_ html: String, _ credentials: [String: String]) -> [String: String] {
@@ -275,7 +280,12 @@ class HtmlParsing {
     let storeTwoChar = StoreNameHelper.lookupStoreTwochar(forNumber: storeNumber)
     let cardNumber = credentials["cardNumber"] ?? "000000"
     let cardPin = credentials["pin"] ?? "0000"
-    paramList["cardData"] = "%" + storeTwoChar + cardNumber + "=?"
+    //print("credentials[mou] \(credentials["mou"])")
+    if (credentials["mou"] == "no" || credentials["mou"] == "0") {
+      paramList["cardData"] = "%25" + storeTwoChar + cardNumber
+    } else {
+      paramList["cardData"] = "%mou" + cardNumber
+    }
     paramList["signinPinNumber"] = cardPin
     paramList["submitPin"] = "Beam+Me+Up!"
     return paramList

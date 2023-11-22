@@ -104,14 +104,14 @@ class UntappdHelper {
       
       //print("DEBUG: looking for [" + changable + "-name] in the Element")
       let beerNameElement = try htmlBeerElement.getElementsByClass(changable + "-name").first()
-      guard let paragraphElement = try beerNameElement?.getElementsByTag("p").first() else {
-        print("problem with paragraph element")
-        return [String:String]()
-      }
+      //guard let paragraphElement = try beerNameElement?.getElementsByTag("p").first() else {
+      //  print("problem with paragraph element")
+      //  return [String:String]()
+      //}
       //let debugString = try paragraphElement.html()
       //print("paragraph element " + debugString)
       
-      guard let anchorElement = try paragraphElement.getElementsByTag("a").first() else {
+      guard let anchorElement = try beerNameElement?.getElementsByTag("a").first() else {
         print("problem with anchor element")
         return [String:String]()
       }
@@ -125,12 +125,15 @@ class UntappdHelper {
         print("problem getting int value for untapped item")
         return [String:String]()
       }
-      let abvElement = try htmlBeerElement.getElementsByClass("abv-hideable").first()
-      if let abvElementGood = abvElement {
-        abv = try abvElementGood.text()
+      let metaElement = try beerNameElement?.getElementsByClass(changable + "-meta").first()
+      if let metaElementGood = metaElement {
+        let abvElement = try metaElementGood.getElementsByClass(changable + "abv").first()
+        if let abvElementGood = abvElement {
+          abv = try abvElementGood.text()
+        }
       }
 
-      let breweryNameElement = try htmlBeerElement.getElementsByClass("brewery-name-hideable").first()
+      let breweryNameElement = try htmlBeerElement.getElementsByClass("brewery").first()
       if let breweryNameElementGood = breweryNameElement {
         breweryName = try breweryNameElementGood.text()
         let breweryAnchor = try breweryNameElementGood.getElementsByTag("a").first()

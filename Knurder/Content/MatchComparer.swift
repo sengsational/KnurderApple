@@ -61,6 +61,18 @@ class MatchComparer {
     }
   }
   
+  func isHardMatch() -> Bool {
+    if cleanedSaucer.isEmpty || cleanedUntappd.isEmpty {
+      return false
+    }
+    lastTechnique = "HARD_MATCH"
+    if let untappdLookupMatch = Constants.HARD_MATCH_MAP[cleanedSaucer] {
+      //print("[" + cleanedSaucer + "][" + untappdLookupMatch + "] ")
+      return true
+    }
+    return false
+  }
+  
   func hasAllWords(stringOne: String, stringTwo: String) -> Bool {
     let listOne = stringOne.components(separatedBy: " ")
     let listTwo = stringTwo.components(separatedBy: " ")

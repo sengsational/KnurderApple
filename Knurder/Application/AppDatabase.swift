@@ -66,6 +66,12 @@ struct AppDatabase {
         try db.execute("ALTER TABLE ufo ADD COLUMN untappd_beer TEXT")
         try db.execute("ALTER TABLE ufo ADD COLUMN untappd_brewery TEXT")
       }
+
+      //DRS 20231121
+      migrator.registerMigration("v4") { db in
+        try db.execute("ALTER TABLE ufo ADD COLUMN que_stamp TEXT")
+        try db.execute("ALTER TABLE ufo ADD COLUMN currently_queued TEXT")
+      }
       
       return migrator
     }

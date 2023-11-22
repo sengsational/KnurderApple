@@ -295,7 +295,7 @@ class TransactionDriver {
     // MARK: **FORM SUBMIT OPERATION**
     var postUrlRequest = URLRequest(url: url!) //same url
     postUrlRequest.httpMethod = "PUT"
-    postUrlRequest.timeoutInterval = 75
+    postUrlRequest.timeoutInterval = 240
     for item in Constants.Http.postHeaders {
       postUrlRequest.addValue(item.value, forHTTPHeaderField: item.key)
     }
