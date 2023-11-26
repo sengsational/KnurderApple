@@ -133,10 +133,11 @@ struct Constants {
     static let GOOD_BEER_LIST = "You've got the current beer list!"
     static let GOOD_BEER_MENU_LIST = "You've got the current beer list plus details!"
     static let GOOD_TASTED_LIST = "You've got your tasted list!"
-    static let GOOD_UPLOAD = "Your flagged beers are queued-up!"
+    static let GOOD_UPLOAD = "Your flagged beers have been refreshed"
   }
   
   static let ONE_DAY_IN_SECONDS = 24 * 60 * 60
+  static let FOUR_HOURS_IN_SECONDS = 14400.0
   
   static let QUERY_JUST_LANDED = "queryJustLanded"
   static let QUERY_FLAGGED = "queryFlagged"

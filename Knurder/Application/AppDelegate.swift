@@ -67,6 +67,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return queryTastedKey == "L"
   }
   
+  static func currentQueryIsFlagged() -> Bool {
+    let queryCaller = SharedPreferences.getString(PreferenceKeys.lastQueryButtonPref, Constants.QUERY_CUSTOM)
+    if queryCaller == Constants.QUERY_FLAGGED {
+      return true
+    } else {
+      return false
+    }
+  }
+  
   static func getCurrentQuery(searchText: String = "") -> [String] {
 
     let querySortOrder = SharedPreferences.getString(PreferenceKeys.lastQuerySortByPref, Constants.SORT_NAME)

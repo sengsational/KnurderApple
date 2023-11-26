@@ -305,7 +305,7 @@ class HtmlParsing {
             let removeQueueList = try collapseList.get(0).getElementsByClass("removeQueuedBrewIcon")
             let brewId = try removeQueueList.get(0).attr("brewid")
             print("found queued beer: " + brewId);
-            foundBeerIds += brewId + ", "
+            foundBeerIds += brewId + ","
           } catch {
             print("failed for \(card.debugDescription)")
           }
@@ -318,7 +318,7 @@ class HtmlParsing {
       print("error in the queued beer.")
       message = "error in the queued beer."
     }
-    print("queued beer message: \(message)")
+    print("queued beer message: \(message) [ \(foundBeerIds) ]")
     return foundBeerIds
   }
 

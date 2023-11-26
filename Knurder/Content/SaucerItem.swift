@@ -541,7 +541,137 @@ class SaucerItem: Record, CustomStringConvertible {
       }
     }
   }
+
+  // DRS 20231121
+  static func brewIdIsTasted(brewId: String) -> Bool {
+    var successfulTransaction = "false"
+    var isTasted = false
+    do {
+      try dbQueue.read({db in
+        //try db.execute("select tasted from UFO where swhere brew_id ='" + brewId + "'")
+        if let row = try Row.fetchOne(db, "SELECT tasted from UFO where brew_id = ?", arguments: [brewId]) {
+          // -------- record exists -----------
+          if "T" == row["tasted"] {
+            isTasted = true
+          }
+        }
+        successfulTransaction  = "true"
+      })
+      print("successful Transaction " + successfulTransaction)
+    } catch {
+        print("ERROR: brewIdIsTasted() database inquiry failed.")
+    }
+    print("brewIdIsTasted returning \(isTasted)")
+    return isTasted
+  }
   
+  // DRS 20231121
+  static func hasCurrentTimestamp(brewId: String) -> Bool {
+    print("hasCurrentTimestamp(" + brewId + ")")
+    var dbTimestampIsCurrent = false
+    do {
+      try _ = dbQueue.read({db in
+        if let row = try Row.fetchOne(db, "SELECT * from UFO where brew_id = ?", arguments: [brewId]) {
+          // -------- record exists -----------
+          if var queueStamp: String = row["que_stamp"] { //2023 11 11 13 13
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy MM dd HH mm"
+            if let startDate = dateFormatter.date(from: queueStamp) {
+              let ageInSeconds = Date().timeIntervalSince(startDate);
+              print(String(format: "ageInSeconds: %.0f", ageInSeconds))
+              print(String(format: "fourhours: %.0f", Constants.FOUR_HOURS_IN_SECONDS))
+              if (ageInSeconds > 0 && ageInSeconds < Constants.FOUR_HOURS_IN_SECONDS) {
+                print("#Has current timestamp")
+                dbTimestampIsCurrent = true
+              } else {
+                print("#Has older timestamp")
+              }
+            } else {
+              print("Could not format date [" + queueStamp + "]")
+            }
+          } else {
+            print("Has no timestamp")
+          }
+        } else {
+          print("brewId " + brewId + " not found in the database")
+        }
+        return false
+      })
+    } catch {
+        print("ERROR: brewIdIsTasted() database inquiry failed.")
+    }
+    print("returning \(dbTimestampIsCurrent) from hasCurrentTimestamp")
+    return dbTimestampIsCurrent
+  }
+
+  // DRS 20231121
+  static func resetQueued(currentQueuedBeerIds: String) {
+    var successfulTransaction = "false"
+    do {
+      try dbQueue.inDatabase({db in
+        try db.execute("update UFO set currently_queued = 'F'")
+        
+        let queuedArray = currentQueuedBeerIds.components(separatedBy: ",")
+        for brewId in queuedArray {
+          let brewId = brewId.trim()
+          try db.execute("update UFO set currently_queued = 'T' where brew_id = '" + brewId + "'")
+        }
+        successfulTransaction  = "true"
+      })
+      print("resetQueued() successful Transaction " + successfulTransaction)
+    } catch {
+        print("ERROR: resetQueued() database activity failed.")
+    }
+  }
+  
+  // DRS 20231121
+  static func setQueuedTimestamp(brewIdNeedingTimestamp: String) {
+    var successfulTransaction = "false"
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy MM dd HH mm"
+    let nowString = dateFormatter.string(from: Date())
+    do {
+      try dbQueue.inDatabase({db in
+        try db.execute("update UFO set que_stamp = '" + nowString + "' where brew_id = '" + brewIdNeedingTimestamp + "'")
+        try db.execute("update UFO set currently_queued = 'T' where brew_id = '" + brewIdNeedingTimestamp + "'")
+        successfulTransaction  = "true"
+      })
+      print("resetQueued() successful Transaction " + successfulTransaction)
+    } catch {
+        print("ERROR: resetQueued() database activity failed.")
+    }
+  }
+  
+  // DRS 20231121
+  func getQueText() -> String {
+    var returnQueText = ""
+    if let que_stamp = que_stamp {
+      let dateFormatter = DateFormatter()
+      dateFormatter.dateFormat = "yyyy MM dd HH mm"
+      if let queueDate = dateFormatter.date(from: que_stamp) {
+        let ageInSeconds = Date().timeIntervalSince(queueDate);
+        if (ageInSeconds > 0 && ageInSeconds < Constants.FOUR_HOURS_IN_SECONDS) {
+          print((name ?? "???") + " has current timestamp")
+          if (tasted == "T") {
+            returnQueText = "" // tasted beers never queued
+          } else if let currently_queued = currently_queued {
+            if (currently_queued == "T") {
+              returnQueText = "      [QUEUED]"
+            } else {
+              returnQueText = "      [APPLIED]"
+            }
+          }
+        } else {
+          print((name ?? "???") + " has old timestamp")
+          returnQueText = ""
+        }
+      }
+    } else {
+      //print("que_stamp was not populated for " + (name ?? "???"))
+    }
+    return returnQueText
+  }
+
   static func refreshTastedList(rawItems: String) -> String {
     var updateCount = 0
     var insertCount = 0

@@ -202,7 +202,7 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
       cardWarning = "\n\nYou will need your card number and pin.\n\n(get it working on the Saucer web site first)"
     }
     
-    let alertViewController = UIAlertController(title: "Send to Brews on Queue", message: "Do you want to send the flagged beers in this list to `brews on queue`? \(cardWarning)", preferredStyle: .alert)
+    let alertViewController = UIAlertController(title: "Send/Refresh Brews on Queue", message: "Do you want to align your flagged beers in this list with `brews on queue`? \(cardWarning)", preferredStyle: .alert)
     let cancelAction = UIAlertAction.init(title: "CANCEL", style: .cancel) { (action) -> Void in    }
     let shareAction = UIAlertAction.init(title: "SEND", style: .default, handler: { (action: UIAlertAction!) in
       print("this is where we do the upload")
@@ -321,11 +321,21 @@ extension MasterViewController: UISearchResultsUpdating {
     //print("MasterViewController.configure()" + saucerItem.getBeerName())
 
     if !AppDelegate.currentQueryIsTasted() {
+      //ABV Content
       let abvText = SaucerItem.getAbvText(saucerItem.abv)
+      
+      //Queued Content (for brews on queue)
+      let queText = saucerItem.getQueText()
+      
+      var specialTastedMessage = ""
+      if saucerItem.tasted == "T" && AppDelegate.currentQueryIsFlagged() {
+        specialTastedMessage = "      [TASTED]"
+      }
+      
       if abvText.count > 0 {
-        cell.beerStyle?.text = abvText + " - " + saucerItem.style!
+        cell.beerStyle?.text = abvText + " - " + saucerItem.style! + queText + specialTastedMessage
       } else {
-        cell.beerStyle?.text = saucerItem.style!
+        cell.beerStyle?.text = saucerItem.style! + queText + specialTastedMessage
       }
       
       

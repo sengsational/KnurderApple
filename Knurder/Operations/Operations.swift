@@ -1229,26 +1229,48 @@ class UploadFlaggedBeersOperation: AsyncOperation {
   }
   
   func setQueuedBeers(_queuedBeers: String) {
+    //beerIdsCurrentlyOnTheWebQueue - this is comma separated, so "21162967," or maybe "22223345,21162967,"
     queuedBeers = _queuedBeers
   }
   
   override func main() {
-    print("--------------------------1-UPLOAD FLAGGED PAGE IS STARTING-- \(brewIds.count) iterations -----------------------")
+    print("UFBO>>>>------------------1-UPLOAD FLAGGED PAGE IS STARTING-- \(brewIds.count) iterations -----------------------")
     let storeNumber = SharedPreferences.getString(PreferenceKeys.storeNumberPref, "13888") //The list store number, not the cardauth store number
     
     var dataTaskList = [URLSessionDataTask]()
     
-    for brewId in brewIds {
-      if let queuedBeers = queuedBeers {
-        if queuedBeers.indexOf(brewId) > 0 {
-          print("the brewId " + brewId + " is already queued")
+    SaucerItem.resetQueued(currentQueuedBeerIds: queuedBeers)// After this, our currently_queued database entries are aligned with the web
+    
+    
+    // DRS 20231121
+    for appFlaggedBrewId in brewIds {
+      print("\nUFBO>>>>the appFlaggedBrewId is [ \(appFlaggedBrewId) ]<<<<<<<<<<<<<<<<<<<<<<<<<")
+      // Skip beers found on the current web page
+      if let beerIdsCurrentlyOnTheWebQueue = queuedBeers {
+        print("UFBO>>>>the beerIdsCurrentlyOnTheWebQueue was [ \(beerIdsCurrentlyOnTheWebQueue) ]")
+        if beerIdsCurrentlyOnTheWebQueue.indexOf(appFlaggedBrewId) > -1 {
+          print("UFBO>>>>the brewId " + appFlaggedBrewId + " is already queued, not being added.")
           continue
-        } else {
-          print("the brewId " + brewId + " will be posted")
         }
       }
+      // Skip tasted beers
+      if SaucerItem.brewIdIsTasted(brewId: appFlaggedBrewId) {
+        //The saucer does not allow already tasted to be queued.
+        print("UFBO>>>>the brewId " + appFlaggedBrewId + " is tasted status, not being added.")
+        continue
+      }
+      // Skip beers that have a current timestamp
+      print("UFBO>>>>UploadFlaggedBeersOperation with appFlaggedBrewId: " + appFlaggedBrewId)
+      let hasCurrentTimestamp = SaucerItem.hasCurrentTimestamp(brewId: appFlaggedBrewId)
+      print("UFBO>>>>hasCurrentTimestamp \(hasCurrentTimestamp)")
+      if hasCurrentTimestamp {
+        print("UFBO>>>>the brewId " + appFlaggedBrewId + " has a current timestamp, not being added.")
+        continue
+      }
+      // Otherwise, prepare a web transaction to post this one.
+      print("UFBO>>>>the brewId " + appFlaggedBrewId + " will be posted")
       var eachGetRequest = getRequest
-      eachGetRequest.url = eachGetRequest.url?.appending("brewID", value: brewId)
+      eachGetRequest.url = eachGetRequest.url?.appending("brewID", value: appFlaggedBrewId)
       eachGetRequest.url = eachGetRequest.url?.appending("storeID", value: storeNumber)
       
       let dataTask = defaultSession.dataTask(with: eachGetRequest) {data, response, error in
@@ -1259,7 +1281,7 @@ class UploadFlaggedBeersOperation: AsyncOperation {
           let fields = response.allHeaderFields as? [String: String],
           response.statusCode == 200 else {
           print("No data or statusCode not OK")
-          print("--------------------------1-UPLOAD FLAGGED PAGE FAILED WITH BAD STATUS- \(brewId)-----------------------")
+          print("--------------------------1-UPLOAD FLAGGED PAGE FAILED WITH BAD STATUS- \(appFlaggedBrewId)-----------------------")
           self.cancelOperations(queue: self.mQueue)
           self.state = .finished
           self.completedCount += 1
@@ -1268,12 +1290,19 @@ class UploadFlaggedBeersOperation: AsyncOperation {
 
         print("status code: " + String(response.statusCode) + " for request: " + self.getRequest.debugDescription)
         
+        if response.statusCode == 200 {
+          print("UFBO>>>>setting timestamp for successfully posted beer")
+          SaucerItem.setQueuedTimestamp(brewIdNeedingTimestamp: appFlaggedBrewId)
+        } else {
+          print("UFBO>>>>beer not successfully posted.  Not setting timestamp")
+        }
+        
         if let returnData = String(data: data, encoding: .utf8) {
           print("returned page had: " + String(returnData.count) + " characters")
           HtmlParsing.manageHeaderFieldCookies(fields: fields, url: responseUrl, outputPrint: true)
         }
         
-        print("--------------------------1-UPLOAD FLAGGED PAGE IS DONE-\(brewId)------------------------")
+        print("--------------------------1-UPLOAD FLAGGED PAGE IS DONE-\(appFlaggedBrewId)------------------------")
         //This operation is not done until all beers are uploaded, so self.state is not yet .finished
         self.completedCount += 1
       }

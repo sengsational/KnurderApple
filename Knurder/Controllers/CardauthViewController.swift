@@ -133,7 +133,7 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
         print("logging in with \(cardNumber) \(pin) \(storeName) \(storeNumberCardauth)")
         dismiss(animated: false, completion: nil)
         let brewCount = String(brewIds.count)
-        LoaderController.sharedInstance.showLoader(masterViewController: masterViewController, title: "Please Wait", message: "Sending \(brewCount) flagged beers to brews on queue...")
+        LoaderController.sharedInstance.showLoader(masterViewController: masterViewController, title: "Please Wait", message: "Checking \(brewCount) flagged beers with brews on queue...")
         let credentialsCa = [Constants.CredentialsKey.cardNumber:cardNumber,Constants.CredentialsKey.pin:pin,Constants.CredentialsKey.storeNumberCardauth:storeNumberCardauth,Constants.CredentialsKey.mou:mou]
         TransactionDriver.uploadBrewsOnQueue(credentialsCa, masterViewController, brewIds)
       }
