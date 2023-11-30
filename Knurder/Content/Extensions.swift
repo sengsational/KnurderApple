@@ -155,7 +155,7 @@ public extension String {
   }
 
   func indexOf(_ substring: String, _ offset: Int ) -> Int {
-        print("Extension.swift indexOf(substring, offset)")
+        //print("Extension.swift indexOf(substring, offset)")
         if(offset > count) {return -1}
 
         let maxIndex = self.count - substring.count
@@ -168,12 +168,12 @@ public extension String {
                 let selfSubstring = self.substring(with: rangeSubstring)
                 #endif
                 if selfSubstring == substring {
-                    print("Extension.swift indexOf(" + substring + "," + String(offset) + ") returning " + String(index))
+                    //print("Extension.swift indexOf(" + substring + "," + String(offset) + ") returning " + String(index))
                     return index
                 }
             }
         }
-        print("Extension.swift indexOf(" + substring + "," + String(offset) + ") returning -1")
+        //print("Extension.swift indexOf(" + substring + "," + String(offset) + ") returning -1")
         return -1
     }
 

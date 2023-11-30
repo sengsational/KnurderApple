@@ -125,7 +125,7 @@ class LogonViewController: UIViewController, UITableViewDelegate, UITableViewDat
         Toast.show(message: "trying to log in using \(cardNumber) on issued by \(storeName)", controller: self)
         print("logging in with \(cardNumber) \(password) \(mou) \(storeName) \(storeNumber)")
         dismiss(animated: false, completion: nil)
-        LoaderController.sharedInstance.showLoader(viewController: viewController, title: "Please Wait", message: "Getting your tasted list from the UFO site")
+        LoaderController.sharedInstance.showLoader(viewController: viewController, title: "Please Wait", message: "Getting your tasted list from the UFO site. Lately, the Saucer site has been taking several minutes to authenticate.")
         let credentials = [Constants.CredentialsKey.emailOrUsername:cardNumber,Constants.CredentialsKey.password:password,Constants.CredentialsKey.mou:mou, Constants.CredentialsKey.storeNumber:storeNumber]
         TransactionDriver.fetchTasted(credentials, viewController)
       }

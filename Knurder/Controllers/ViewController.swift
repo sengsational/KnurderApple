@@ -422,7 +422,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
     })
     let refreshTasted = UIAlertAction(title: "Refresh Tasted", style: .default, handler: { (alert: UIAlertAction!) -> Void in
       print("refresh tasted action")
-      LoaderController.sharedInstance.showLoader(viewController: self, title: "Please Wait", message: "Getting your tasted list from the UFO site")
+      LoaderController.sharedInstance.showLoader(viewController: self, title: "Please Wait", message: "Getting your tasted list from the UFO site. Lately, the Saucer site has been taking several minutes to authenticate.")
       let credentials = SharedPreferences.getCredentials()
       TransactionDriver.fetchTasted(credentials, self)
     })

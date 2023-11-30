@@ -367,7 +367,7 @@ class SaucerItem: Record, CustomStringConvertible {
   var created_date: String? //calculated from created
   public var new_arrival: String? {
     willSet(aValue) {
-      //print("fuck2 \(String(describing: aValue))")
+      //print("created_date will set \(String(describing: aValue))")
     }
   } //added during database population
   var is_import: String?    //added during database population
@@ -573,7 +573,7 @@ class SaucerItem: Record, CustomStringConvertible {
       try _ = dbQueue.read({db in
         if let row = try Row.fetchOne(db, "SELECT * from UFO where brew_id = ?", arguments: [brewId]) {
           // -------- record exists -----------
-          if var queueStamp: String = row["que_stamp"] { //2023 11 11 13 13
+          if let queueStamp: String = row["que_stamp"] { //2023 11 11 13 13
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy MM dd HH mm"
             if let startDate = dateFormatter.date(from: queueStamp) {
@@ -603,14 +603,26 @@ class SaucerItem: Record, CustomStringConvertible {
     print("returning \(dbTimestampIsCurrent) from hasCurrentTimestamp")
     return dbTimestampIsCurrent
   }
-
+  
   // DRS 20231121
-  static func resetQueued(currentQueuedBeerIds: String) {
+  static func setAllItemsToNotCurrentlyQueued() {
     var successfulTransaction = "false"
     do {
       try dbQueue.inDatabase({db in
         try db.execute("update UFO set currently_queued = 'F'")
-        
+        successfulTransaction  = "true"
+      })
+      print("resetQueued() successful Transaction " + successfulTransaction)
+    } catch {
+        print("ERROR: resetQueued() database activity failed.")
+    }
+  }
+
+  // DRS 20231121
+  static func resetQueuedDbUpdateNOTUSED(currentQueuedBeerIds: String) { //static function updating database - CALLED FROM SUB LIST PROCESS!
+    var successfulTransaction = "false"
+    do {
+      try dbQueue.inDatabase({db in
         let queuedArray = currentQueuedBeerIds.components(separatedBy: ",")
         for brewId in queuedArray {
           let brewId = brewId.trim()
@@ -624,22 +636,13 @@ class SaucerItem: Record, CustomStringConvertible {
     }
   }
   
-  // DRS 20231121
-  static func setQueuedTimestamp(brewIdNeedingTimestamp: String) {
-    var successfulTransaction = "false"
+  // DRS 20231128
+  func setQueuedTimestamp() {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy MM dd HH mm"
     let nowString = dateFormatter.string(from: Date())
-    do {
-      try dbQueue.inDatabase({db in
-        try db.execute("update UFO set que_stamp = '" + nowString + "' where brew_id = '" + brewIdNeedingTimestamp + "'")
-        try db.execute("update UFO set currently_queued = 'T' where brew_id = '" + brewIdNeedingTimestamp + "'")
-        successfulTransaction  = "true"
-      })
-      print("resetQueued() successful Transaction " + successfulTransaction)
-    } catch {
-        print("ERROR: resetQueued() database activity failed.")
-    }
+    self.que_stamp = nowString
+    self.currently_queued = "T"
   }
   
   // DRS 20231121
@@ -655,14 +658,14 @@ class SaucerItem: Record, CustomStringConvertible {
           if (tasted == "T") {
             returnQueText = "" // tasted beers never queued
           } else if let currently_queued = currently_queued {
-            if (currently_queued == "T") {
+            if currently_queued == "T" {
               returnQueText = "      [QUEUED]"
             } else {
               returnQueText = "      [APPLIED]"
             }
           }
         } else {
-          print((name ?? "???") + " has old timestamp")
+          //print((name ?? "???") + " has old timestamp")
           returnQueText = ""
         }
       }
@@ -672,7 +675,7 @@ class SaucerItem: Record, CustomStringConvertible {
     return returnQueText
   }
 
-  static func refreshTastedList(rawItems: String) -> String {
+  static func refreshTastedList(rawItems: String) -> String { //static function updating database - Called before list is displayed - OK
     var updateCount = 0
     var insertCount = 0
     var successfulLoad = false
@@ -823,7 +826,7 @@ class SaucerItem: Record, CustomStringConvertible {
     
   }
   
-  static func refreshStoreList(rawItems: String, storeNumber: String, storeName: String) -> String {
+  static func refreshStoreList(rawItems: String, storeNumber: String, storeName: String) -> String { //static function updating database - Called before list is displayed - OK
     var updateCount = 0
     var insertCount = 0
     var successfulLoad = false
@@ -929,7 +932,7 @@ class SaucerItem: Record, CustomStringConvertible {
     }
   }
   
-  static func refreshNewArrivals(newArrivalNames names: [String]) {
+  static func refreshNewArrivals(newArrivalNames names: [String]) { //static function updating database - Called before list is displayed - OK
 
     do {
       try dbQueue.inDatabase({db in
@@ -947,7 +950,7 @@ class SaucerItem: Record, CustomStringConvertible {
     }
   }
   
-  static func setItemAsReviewed(_ review_id: String?) {
+  static func setItemAsReviewed(_ review_id: String?) { //static function updating database - Not sure about safety of this one
     do {
       try dbQueue.inDatabase({db in
         try db.execute("update UFO set REVIEW_FLAG = 'W' where REVIEW_ID = \(review_id ?? "99999999999999")")

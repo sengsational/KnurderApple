@@ -14,6 +14,11 @@ class ManagePageViewController: UIPageViewController {
   var brewController: FetchedRecordsController<SaucerItem>!
   var currentIndexPath: IndexPath!
   //var currentIndex: Int!
+
+  override func viewWillDisappear(_ animated: Bool) {
+    print("ManagePageViewController viewWillDisappear")
+    AppDelegate.masterViewController.reloadData()
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()

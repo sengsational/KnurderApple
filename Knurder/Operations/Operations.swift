@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-
+import GRDB
 
 class PostReviewsOperation: AsyncOperation {
   var saucerItemsx: [SaucerItem]
@@ -607,6 +607,10 @@ class FinishOperation: AsyncOperation {
   
   override func main() {
     print("FinishOperaiton.main() - message \(message) uiParameters description " + uiParameters.debugDescription + "clearLoader \(clearLoader) viewControllerPouplated \(viewControllerPouplated)")
+    //DRS 20231128
+    DispatchQueue.main.async {
+      self.masterViewController.reloadData()
+    }
     if clearLoader {
       if viewControllerPouplated {
         LoaderController.sharedInstance.removeLoader(viewController: self.viewController, message, uiParameters: uiParameters)
@@ -1214,17 +1218,19 @@ class UploadFlaggedBeersOperation: AsyncOperation {
   var defaultSession: URLSession
   var credentials: [String: String]
   var brewIds: [String]
+  var saucerItems: [SaucerItem]
   var followupOp: FinishOperation? = nil
   var queuedBeers: String!
   var mQueue: OperationQueue
   var completedCount: Int = 0
-  init(getRequest: URLRequest, defaultSession: URLSession, credentials: [String: String], brewIds: [String], queue: OperationQueue) {
+  init(getRequest: URLRequest, defaultSession: URLSession, credentials: [String: String], brewIds: [String], saucerItems: [SaucerItem], queue: OperationQueue) {
     self.getRequest = getRequest
     //self.postRequest = getRequest
     self.defaultSession = defaultSession
     self.credentials = credentials
     self.brewIds = brewIds
     self.mQueue = queue
+    self.saucerItems = saucerItems
     super.init()
   }
   
@@ -1239,24 +1245,53 @@ class UploadFlaggedBeersOperation: AsyncOperation {
     
     var dataTaskList = [URLSessionDataTask]()
     
-    SaucerItem.resetQueued(currentQueuedBeerIds: queuedBeers)// After this, our currently_queued database entries are aligned with the web
+    // We are aligning with the web site, so cleaer anything we had in the past
+    SaucerItem.setAllItemsToNotCurrentlyQueued() // Warning: Modifies the database directly, bypassing the model.
     
+    // Loop the saucer items passed in from the app flagged list.  Set currently_queued to "T" for each
+    for record in self.saucerItems {
+      print("record \(record.getBeerName()) \(record.highlighted ?? "?") << T means it's flagged") //Has T for flagged
+      // The "brewIds" and the "saucerItems" should be the same size, and be the same set of beers
+      if let brew_id = record.brew_id {
+        if brewIds.contains(brew_id) {
+          if queuedBeers.contains(brew_id) {
+            print(">>>>>> setting \(brew_id) currently_queued to T because it was on the web.")
+            record.currently_queued = "T"
+            //MUST DO THIS OR IT DOESN'T CHANGE
+            try! dbQueue.inDatabase { db in
+              try record.update(db)
+            }
+            //print("UPDATED RECORD1T: \(record)")
+          } else {
+            print(">>>>> setting \(brew_id) currerntly_queued to F because it was not on the web.")
+            record.currently_queued = "F"
+            //MUST DO THIS OR IT DOESN'T CHANGE
+            try! dbQueue.inDatabase { db in
+              try record.update(db)
+            }
+            //print("UPDATED RECORD1F: \(record)")
+          }
+        } else {
+          print("ERROR: \(brew_id) was not found in saucerItems list")
+        }
+      }
+    }
     
-    // DRS 20231121
+    // DRS 20231121 UFBO
     for appFlaggedBrewId in brewIds {
       print("\nUFBO>>>>the appFlaggedBrewId is [ \(appFlaggedBrewId) ]<<<<<<<<<<<<<<<<<<<<<<<<<")
       // Skip beers found on the current web page
       if let beerIdsCurrentlyOnTheWebQueue = queuedBeers {
         print("UFBO>>>>the beerIdsCurrentlyOnTheWebQueue was [ \(beerIdsCurrentlyOnTheWebQueue) ]")
         if beerIdsCurrentlyOnTheWebQueue.indexOf(appFlaggedBrewId) > -1 {
-          print("UFBO>>>>the brewId " + appFlaggedBrewId + " is already queued, not being added.")
+          print("UFBO>>>>the brewId " + appFlaggedBrewId + " is already queued, not being added to dataTask for upload.")
           continue
         }
       }
       // Skip tasted beers
       if SaucerItem.brewIdIsTasted(brewId: appFlaggedBrewId) {
         //The saucer does not allow already tasted to be queued.
-        print("UFBO>>>>the brewId " + appFlaggedBrewId + " is tasted status, not being added.")
+        print("UFBO>>>>the brewId " + appFlaggedBrewId + " is tasted status, not being added to dataTask for upload.")
         continue
       }
       // Skip beers that have a current timestamp
@@ -1264,7 +1299,7 @@ class UploadFlaggedBeersOperation: AsyncOperation {
       let hasCurrentTimestamp = SaucerItem.hasCurrentTimestamp(brewId: appFlaggedBrewId)
       print("UFBO>>>>hasCurrentTimestamp \(hasCurrentTimestamp)")
       if hasCurrentTimestamp {
-        print("UFBO>>>>the brewId " + appFlaggedBrewId + " has a current timestamp, not being added.")
+        print("UFBO>>>>the brewId " + appFlaggedBrewId + " has a current timestamp, not being added to dataTask for upload.")
         continue
       }
       // Otherwise, prepare a web transaction to post this one.
@@ -1292,7 +1327,21 @@ class UploadFlaggedBeersOperation: AsyncOperation {
         
         if response.statusCode == 200 {
           print("UFBO>>>>setting timestamp for successfully posted beer")
-          SaucerItem.setQueuedTimestamp(brewIdNeedingTimestamp: appFlaggedBrewId)
+          for record in self.saucerItems {
+            print("record \(record.getBeerName()) \(record.highlighted ?? "?") <-- T means its flagged") //Has T for flagged
+            if let brew_id = record.brew_id {
+              if appFlaggedBrewId == brew_id {
+                print("UFBO>>>Updating the flagged SaucerItem \(record.getBeerName()) with current timestamp")
+                record.setQueuedTimestamp()
+                //MUST DO THIS OR IT DOESN'T CHANGE
+                try! dbQueue.inDatabase { db in
+                  try record.update(db)
+                }
+                //print("UPDATED RECORD2: \(record)")
+              }
+            }
+          }
+
         } else {
           print("UFBO>>>>beer not successfully posted.  Not setting timestamp")
         }

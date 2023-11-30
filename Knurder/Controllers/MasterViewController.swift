@@ -54,9 +54,7 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
     //navigationController?.navigationBar.isTranslucent = false
     //navigationController?.navigationBar.barTintColor = .blue
     //navigationController?.navigationBar.tintColor = .brown
-    
-    
-    
+    AppDelegate.masterViewController = self
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -177,10 +175,10 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
   }
   @IBAction func onShareIconClick(_ sender: Any) {
     let brewsInTheList = brewController.sections[0]
-    let recordsInTheList = brewsInTheList.records
+    let saucerItemRecords = brewsInTheList.records
     var flaggedBrewIds = [String]()
-    for record in recordsInTheList {
-      print("record \(record.getBeerName()) \(record.highlighted ?? "?")") //Has T for flagged
+    for record in saucerItemRecords {
+      print("record \(record.getBeerName()) \(record.highlighted ?? "?") <<< T means it's flagged") //Has T for flagged
       let highlighted = record.highlighted ?? "X"
       if (highlighted == "T") {
         if let brew_id = record.brew_id {
@@ -212,6 +210,7 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
       cardauthViewController.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
       (cardauthViewController as! CardauthViewController).myMethod(self)
       (cardauthViewController as! CardauthViewController).setBrewIds(flaggedBrewIds)
+      (cardauthViewController as! CardauthViewController).setSaucerItems(saucerItemRecords)
       self.present(cardauthViewController, animated: false)
     })
     alertViewController.addAction(cancelAction)
@@ -225,11 +224,15 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
   func filterContentForSearchText(_ searchText: String) {
     fetchRecords(searchText: searchText)
     self.theSearchText = searchText
-    tableView.reloadData()
+    if let tableView = tableView {
+      tableView.reloadData()
+    }
   }
   
   func reloadData() {
-    tableView.reloadData()
+    if let tableView = tableView {
+      tableView.reloadData()
+    }
   }
   
   func isFiltering() -> Bool {
@@ -315,7 +318,6 @@ extension MasterViewController: UISearchResultsUpdating {
     filterContentForSearchText(searchController.searchBar.text!)
   }
   
-  // ***** The holy grail of setting the cell *****
   func configure(_ cell: BeerTableViewCell, at indexPath: IndexPath) {
     let saucerItem = brewController.record(at: indexPath)
     //print("MasterViewController.configure()" + saucerItem.getBeerName())
@@ -325,20 +327,32 @@ extension MasterViewController: UISearchResultsUpdating {
       let abvText = SaucerItem.getAbvText(saucerItem.abv)
       
       //Queued Content (for brews on queue)
-      let queText = saucerItem.getQueText()
+      var queText = saucerItem.getQueText() //Uses saucerItem.que_stamp, saucerItem.currently_queued and saucerItem.tasted to construct the display text.
       
       var specialTastedMessage = ""
       if saucerItem.tasted == "T" && AppDelegate.currentQueryIsFlagged() {
         specialTastedMessage = "      [TASTED]"
       }
       
-      if abvText.count > 0 {
-        cell.beerStyle?.text = abvText + " - " + saucerItem.style! + queText + specialTastedMessage
-      } else {
-        cell.beerStyle?.text = saucerItem.style! + queText + specialTastedMessage
+      // If we are running short of room, remove spaces from queText and shorten style
+      var finalStyleText = saucerItem.style!
+      if let styleText = saucerItem.style {
+        if styleText.count > 20 {
+          queText = " " + queText.trim()
+          if (queText.count > 3) {
+            finalStyleText = styleText.dropLast(5) + ""
+            finalStyleText = finalStyleText.trim() + "..."
+          }
+        }
       }
       
-      
+      // DRS 20231128 - change the cell for display.
+      //print("setting UI beerStyle with queText to \(queText) for \(saucerItem.name ?? specialTastedMessage) <<-")
+      if abvText.count > 0 {
+        cell.beerStyle?.text = abvText + " - " + finalStyleText + queText + specialTastedMessage
+      } else {
+        cell.beerStyle?.text = finalStyleText + queText + specialTastedMessage
+      }
       cell.beerPrice.text = SaucerItem.getPriceText(saucerItem.glass_price)
       cell.beerPrice.isHidden = false
 
@@ -395,8 +409,10 @@ extension MasterViewController: UISearchResultsUpdating {
     } else {
       cell.beerName.font = UIFont.systemFont(ofSize: cell.beerName.font.pointSize)
     }
-    
-    
+    //MUST DO THIS OR IT DOESN'T CHANGE
+    try! dbQueue.inDatabase { db in
+      try saucerItem.update(db)
+    }
   }
   
   @objc func longPress(_ gesture: UILongPressGestureRecognizer) {

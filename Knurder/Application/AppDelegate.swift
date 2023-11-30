@@ -15,13 +15,18 @@ var dbQueue: DatabaseQueue!
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var window: UIWindow?
+  #if targetEnvironment(simulator)
   static var oldListCheck = true // ONLY FALSE FOR QUICKER TESTING TOXO: RE ENABLE
+  #else
+  static var oldListCheck = true
+  #endif
   
   static var quizCheck = true
   
   //static var queryCaller: String!
   static var brewController: FetchedRecordsController<SaucerItem>!
   static var beerIndexPath: IndexPath!
+  static var masterViewController: MasterViewController!
   
   static var tastedDateFormatInput = DateFormatter()
   static var tastedDateFormatOutput = DateFormatter()

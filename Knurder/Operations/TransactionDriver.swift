@@ -168,7 +168,7 @@ class TransactionDriver {
     print("all operations added and running " + OperationQueue().operations.debugDescription)
   }
   
-  static func uploadBrewsOnQueue(_ credentials: [String: String], _ viewController: MasterViewController, _ brewIds: [String]) {
+  static func uploadBrewsOnQueue(_ credentials: [String: String], _ viewController: MasterViewController, _ brewIds: [String], _ saucerItems: [SaucerItem]) {
     let uploadOpQueue = OperationQueue()
     print("credentials \(credentials.debugDescription)")
     print("brewIds: \(brewIds.debugDescription)")
@@ -237,7 +237,7 @@ class TransactionDriver {
     for item in Constants.Http.getHeaders {
       getQueUrlRequest.addValue(item.value, forHTTPHeaderField: item.key)
     }
-    let uploadFlaggedBeersOp = UploadFlaggedBeersOperation(getRequest: getQueUrlRequest, defaultSession: defaultSession, credentials: credentials, brewIds: brewIds, queue: uploadOpQueue)
+    let uploadFlaggedBeersOp = UploadFlaggedBeersOperation(getRequest: getQueUrlRequest, defaultSession: defaultSession, credentials: credentials, brewIds: brewIds, saucerItems: saucerItems, queue: uploadOpQueue)
     uploadFlaggedBeersOp.name = "UploadFlaggedBeersOperation"
 
     // MARK: **FINISH OPERATION**

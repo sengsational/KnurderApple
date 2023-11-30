@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import GRDB
 
 class CardauthViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -26,6 +27,7 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
   weak var masterViewController: MasterViewController!
   
   var brewIds = [String]()
+  var saucerItems = [SaucerItem]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -133,14 +135,20 @@ class CardauthViewController: UIViewController, UITableViewDelegate, UITableView
         print("logging in with \(cardNumber) \(pin) \(storeName) \(storeNumberCardauth)")
         dismiss(animated: false, completion: nil)
         let brewCount = String(brewIds.count)
-        LoaderController.sharedInstance.showLoader(masterViewController: masterViewController, title: "Please Wait", message: "Checking \(brewCount) flagged beers with brews on queue...")
+        let beerPlural = (brewIds.count == 1) ? "beer" : "beers"
+        LoaderController.sharedInstance.showLoader(masterViewController: masterViewController, title: "Please Wait", message: "Checking \(brewCount) flagged \(beerPlural) with brews on queue...")
         let credentialsCa = [Constants.CredentialsKey.cardNumber:cardNumber,Constants.CredentialsKey.pin:pin,Constants.CredentialsKey.storeNumberCardauth:storeNumberCardauth,Constants.CredentialsKey.mou:mou]
-        TransactionDriver.uploadBrewsOnQueue(credentialsCa, masterViewController, brewIds)
+        TransactionDriver.uploadBrewsOnQueue(credentialsCa, masterViewController, brewIds, saucerItems)
       }
     }
   }
+  
   func setBrewIds(_ _brewIds: [String]) {
     brewIds = _brewIds
+  }
+  
+  func setSaucerItems(_ _saucerItems: [SaucerItem]) {
+    saucerItems = _saucerItems
   }
   
   func myMethod(_ sender: MasterViewController) {
