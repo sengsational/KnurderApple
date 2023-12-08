@@ -624,7 +624,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
   func setButtonText(_ button: UIButton, _ buttonText: String, _ enabled: Bool) {
     button.setTitle(buttonText, for: .normal)
     if (!enabled) {
-      button.setTitleColor(UIColor.red, for: .normal)
+      button.setTitleColor(UIColor(named: "colorsetTextError"), for: .normal)
+      
     } else {
       button.setTitleColor(UIColor(named: "colorsetText"), for: .normal)
     }

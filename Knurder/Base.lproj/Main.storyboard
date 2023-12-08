@@ -226,9 +226,9 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="characterWrap" translatesAutoresizingMaskIntoConstraints="NO" id="P59-Bh-c5U">
-                                <rect key="frame" x="20" y="339.66666666666669" width="335" height="34"/>
+                                <rect key="frame" x="20" y="339.66666666666669" width="335" height="44"/>
                                 <color key="backgroundColor" name="colorsetButtons"/>
-                                <fontDescription key="fontDescription" name="ArialNarrow" family="Arial Narrow" pointSize="12"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="10" maxX="0.0" maxY="10"/>
                                 <state key="normal" title="LIST ALL BEERS">
                                     <color key="titleColor" name="colorsetText"/>
@@ -250,7 +250,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="characterWrap" translatesAutoresizingMaskIntoConstraints="NO" id="SjY-hj-7pC">
-                                <rect key="frame" x="20" y="393.66666666666669" width="335" height="34"/>
+                                <rect key="frame" x="20" y="403.66666666666669" width="335" height="34"/>
                                 <color key="backgroundColor" name="colorsetButtons"/>
                                 <fontDescription key="fontDescription" name="ArialNarrow" family="Arial Narrow" pointSize="12"/>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="10" maxX="0.0" maxY="10"/>
