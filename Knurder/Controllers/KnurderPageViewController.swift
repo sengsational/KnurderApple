@@ -12,6 +12,7 @@ class KnurderPageViewController: UIViewController {
   @IBOutlet weak var scrollView: UIScrollView!
   
   @IBOutlet weak var beerName: UILabel!
+  @IBOutlet weak var queuedText: UILabel!
   @IBOutlet weak var beerStyle: UILabel!
   @IBOutlet weak var beerDescription: UILabel!
   @IBOutlet weak var beerNewState: UILabel!
@@ -69,6 +70,18 @@ class KnurderPageViewController: UIViewController {
       } else {
         beerFlagged.isHidden = true
       }
+      
+      let userName = SharedPreferences.getString(PreferenceKeys.userNamePref, "")
+      if saucerItem.currently_queued == "T" && userName != "" {
+        //queuedText.text = "Queued for " + userName + ":"
+        queuedText.attributedText = ("Queued for " + userName + ":").underLined
+        queuedText.isHidden = false
+        queuedText.textColor = beerName.textColor
+      } else {
+        queuedText.text = ""
+        queuedText.isHidden = true
+      }
+      
       
       if tasted {
         beerName.textColor = UIColor(named: "colorsetTastedText")

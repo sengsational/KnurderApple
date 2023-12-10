@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 private let characterEntities : [ Substring : Character ] = [
   // XML predefined entities:
@@ -48,6 +49,11 @@ public extension StringProtocol {
 
 
 public extension String {
+  
+  var underLined: NSAttributedString {
+    NSMutableAttributedString(string: self, attributes: [.underlineStyle: NSUnderlineStyle.styleSingle.rawValue])
+  }
+  
   func deletePrefix(_ prefix: String) -> String {
     guard self.hasPrefix(prefix) else {return self}
     return String(self.dropFirst(prefix.count))

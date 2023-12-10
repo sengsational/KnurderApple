@@ -1214,7 +1214,7 @@
                                 </connections>
                             </scrollView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="KnurderInApp" translatesAutoresizingMaskIntoConstraints="NO" id="fUb-Hn-SVO" userLabel="Flagged">
-                                <rect key="frame" x="0.0" y="147.66666666666666" width="60" height="20"/>
+                                <rect key="frame" x="0.0" y="228.33333333333334" width="60" height="20"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="OD2-SJ-Dmh"/>
@@ -1222,11 +1222,11 @@
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_glass_pint" translatesAutoresizingMaskIntoConstraints="NO" id="BlO-zh-lIq" userLabel="Glass">
-                                <rect key="frame" x="329" y="122.66666666666669" width="30" height="30"/>
+                                <rect key="frame" x="329" y="203.33333333333334" width="30" height="30"/>
                                 <gestureRecognizers/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" highlighted="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2tl-Mi-rMQ" userLabel="Price">
-                                <rect key="frame" x="332.66666666666669" y="157.66666666666666" width="22.666666666666686" height="10.333333333333343"/>
+                                <rect key="frame" x="332.66666666666669" y="238.33333333333334" width="22.666666666666686" height="10.333333333333343"/>
                                 <attributedString key="attributedText">
                                     <fragment content="$5.99">
                                         <attributes>
@@ -1238,7 +1238,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cS1-zU-l8a">
-                                <rect key="frame" x="36" y="321" width="303" height="15.666666666666686"/>
+                                <rect key="frame" x="36" y="401.66666666666669" width="303" height="15.666666666666686"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Tasted December 31, 2015">
                                         <attributes>
@@ -1250,7 +1250,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="yGs-za-QOT">
-                                <rect key="frame" x="36" y="283" width="303" height="18"/>
+                                <rect key="frame" x="36" y="363.66666666666669" width="303" height="18"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oOa-IW-rZ9">
                                         <rect key="frame" x="0.0" y="0.0" width="151.66666666666666" height="18"/>
@@ -1278,7 +1278,7 @@
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NlS-Sx-VFP">
-                                <rect key="frame" x="0.0" y="244" width="375" height="19"/>
+                                <rect key="frame" x="0.0" y="324.66666666666669" width="375" height="19"/>
                                 <attributedString key="attributedText">
                                     <fragment content="New Arrival">
                                         <attributes>
@@ -1290,7 +1290,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pib-dO-Xrj">
-                                <rect key="frame" x="36" y="188" width="303" height="36"/>
+                                <rect key="frame" x="36" y="268.66666666666669" width="303" height="36"/>
                                 <gestureRecognizers/>
                                 <attributedString key="attributedText">
                                     <fragment content="A light bodied wheat beer with a golden haze.  Hopped up with Simcoe.">
@@ -1303,7 +1303,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a6z-iL-SNj">
-                                <rect key="frame" x="0.0" y="147.66666666666666" width="375" height="20.333333333333343"/>
+                                <rect key="frame" x="0.0" y="228.33333333333334" width="375" height="20.333333333333343"/>
                                 <attributedString key="attributedText">
                                     <fragment content="American Wheat">
                                         <attributes>
@@ -1315,10 +1315,23 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XRc-4Q-o08">
-                                <rect key="frame" x="0.0" y="47.000000000000007" width="375" height="80.666666666666686"/>
+                                <rect key="frame" x="0.0" y="127.66666666666666" width="375" height="80.666666666666657"/>
                                 <attributedString key="attributedText">
                                     <fragment content="Highland Early's Hoppy Wheat">
                                         <attributes>
+                                            <font key="NSFont" size="36" name="ArialMT"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="46K-BM-jO4" userLabel="Queued Message">
+                                <rect key="frame" x="0.0" y="47.000000000000007" width="375" height="80.666666666666686"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="Queued for Greg Deatherage:">
+                                        <attributes>
+                                            <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                             <font key="NSFont" size="36" name="ArialMT"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
@@ -1336,13 +1349,15 @@
                             <constraint firstItem="fUb-Hn-SVO" firstAttribute="leading" secondItem="syK-lY-PoP" secondAttribute="leading" id="5lS-oU-IUn"/>
                             <constraint firstItem="MvU-ps-bs6" firstAttribute="leading" secondItem="kvv-S7-mUV" secondAttribute="leadingMargin" id="60b-0w-Zm2"/>
                             <constraint firstAttribute="trailing" secondItem="XRc-4Q-o08" secondAttribute="trailing" id="9EK-QP-tBW"/>
+                            <constraint firstItem="46K-BM-jO4" firstAttribute="top" secondItem="syK-lY-PoP" secondAttribute="top" id="AyA-ku-lXz"/>
                             <constraint firstItem="a6z-iL-SNj" firstAttribute="top" secondItem="XRc-4Q-o08" secondAttribute="bottom" constant="20" id="Bwe-51-QAS"/>
                             <constraint firstAttribute="trailingMargin" secondItem="pib-dO-Xrj" secondAttribute="trailing" constant="20" id="C8h-8H-VdB"/>
                             <constraint firstItem="MvU-ps-bs6" firstAttribute="top" secondItem="Hpq-Mv-uCp" secondAttribute="bottom" id="HtX-VH-Cr1"/>
-                            <constraint firstItem="XRc-4Q-o08" firstAttribute="top" secondItem="Hpq-Mv-uCp" secondAttribute="bottom" id="R5b-JS-HWN"/>
+                            <constraint firstItem="XRc-4Q-o08" firstAttribute="top" secondItem="46K-BM-jO4" secondAttribute="bottom" id="R5b-JS-HWN"/>
                             <constraint firstItem="MvU-ps-bs6" firstAttribute="trailing" secondItem="kvv-S7-mUV" secondAttribute="trailingMargin" id="RCE-HQ-3cg"/>
                             <constraint firstItem="BlO-zh-lIq" firstAttribute="centerX" secondItem="2tl-Mi-rMQ" secondAttribute="centerX" id="RNy-TF-trf"/>
                             <constraint firstItem="NlS-Sx-VFP" firstAttribute="top" secondItem="pib-dO-Xrj" secondAttribute="bottom" constant="20" id="S7Y-5v-2Pa"/>
+                            <constraint firstItem="46K-BM-jO4" firstAttribute="trailing" secondItem="syK-lY-PoP" secondAttribute="trailing" id="UND-qz-KCl"/>
                             <constraint firstItem="yGs-za-QOT" firstAttribute="leading" secondItem="kvv-S7-mUV" secondAttribute="leadingMargin" constant="20" id="VNq-rK-Xd6"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cS1-zU-l8a" secondAttribute="trailing" constant="20" id="Vty-VE-eK8"/>
                             <constraint firstAttribute="trailing" secondItem="a6z-iL-SNj" secondAttribute="trailing" id="WFG-AD-Uog"/>
@@ -1355,6 +1370,7 @@
                             <constraint firstItem="2tl-Mi-rMQ" firstAttribute="top" secondItem="BlO-zh-lIq" secondAttribute="bottom" constant="5" id="hAp-Pj-Yh4"/>
                             <constraint firstItem="yGs-za-QOT" firstAttribute="top" secondItem="NlS-Sx-VFP" secondAttribute="bottom" constant="20" id="hL7-OB-dDK"/>
                             <constraint firstItem="MvU-ps-bs6" firstAttribute="trailing" secondItem="BlO-zh-lIq" secondAttribute="trailing" id="heo-Wu-01i"/>
+                            <constraint firstItem="46K-BM-jO4" firstAttribute="leading" secondItem="syK-lY-PoP" secondAttribute="leading" id="in5-Vl-r5e"/>
                             <constraint firstAttribute="trailingMargin" secondItem="yGs-za-QOT" secondAttribute="trailing" constant="20" id="pN4-h6-3gP"/>
                             <constraint firstItem="cS1-zU-l8a" firstAttribute="leading" secondItem="kvv-S7-mUV" secondAttribute="leadingMargin" constant="20" id="uqN-ij-Kmw"/>
                             <constraint firstItem="cS1-zU-l8a" firstAttribute="top" secondItem="yGs-za-QOT" secondAttribute="bottom" constant="20" id="vpE-kS-FiM"/>
@@ -1371,6 +1387,7 @@
                         <outlet property="beerPrice" destination="2tl-Mi-rMQ" id="mSG-0K-Pdm"/>
                         <outlet property="beerStyle" destination="a6z-iL-SNj" id="Khg-KW-Do1"/>
                         <outlet property="beerTastedDate" destination="cS1-zU-l8a" id="afh-8S-ZEw"/>
+                        <outlet property="queuedText" destination="46K-BM-jO4" id="mdi-Eb-5gI"/>
                         <outlet property="scrollView" destination="MvU-ps-bs6" id="H5Y-EE-kem"/>
                     </connections>
                 </viewController>
