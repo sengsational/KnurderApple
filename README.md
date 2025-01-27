@@ -1,6 +1,8 @@
 # KnurderApple
 SO71272885
 
-This is going to be less than helpful.  Sorry about that.  I'm not really the best person to be doing this.
+After a 7 year run (and me paying $750) Knurder for Apple will no longer be updated.  By me anyway.  Apple requires new software versions in order to publish to the App Store, and my old iMac doesn't support the new software.  I'm not going to be coerced into buying new hardware for the privilege of giveing away the Knurder app.
 
-Here's the deal.  This is a hobby for me.  I retired from corporate coding 8 years ago and started to fiddle around with coding mobile apps.  I wrote a marginal Android app, then some apple people came and said I should make an Apple version.  I fumbled through getting some functionality over on an apple version, but wasn't really into it.  Then, all of the bullshipt associated with Apple's charging me $99 to give away an app. Ah, whatever.  Now I've been informed I'm not going to be setting any longevity records, so pushing this out for whomever.  My expectation is that this repo will never be used, but, at least it's 'out there'.  Not that this code is anything to be too proud out (my first look at Swift).  It was fun though.  The coding part, anyway.  The code signing crap from Apple sucks, especially if you're like me and don't own an Apple mobile device.  To any future developers, please take it as far as you can.  Make it your own. Be brutal if you find anything even boarder on idocracy. Never watch the movie "idiocracy" though.  Unless you are stoned.  Then you have my blessing to watch.  It's the stupidiest movie ever.
+If someone wants to fork the project and take over, you have my blessing.  Or if you want to send me or loan me a Mac with iOS 13.5 or later, I'd update Knurder.
+
+I think we had more than 1000 active users at one point.  To all two users that expressed appreciation for the application, thank you.  To the (probably) hundreds that thought about expressing appreciation, thank you too.  Happy drinking, and I hope you can find your favorite beers directly with the Saucer's web site, and get them applied to your plate.
